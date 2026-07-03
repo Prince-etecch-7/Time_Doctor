@@ -1,0 +1,1108 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Tracking - DeskTime</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00d4aa;
+            --primary-dark: #00b892;
+            --secondary: #ff6b6b;
+            --dark: #1a1d29;
+            --dark-light: #2a2d3a;
+            --text: #1a1d29;
+            --text-light: #6b7280;
+            --bg: #ffffff;
+            --bg-light: #f8fafc;
+            --accent-purple: #8b5cf6;
+            --accent-blue: #3b82f6;
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background: var(--bg);
+        }
+
+        .container-custom {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ============ NAVBAR ============ */
+        .navbar-custom {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        .navbar-custom.scrolled { box-shadow: 0 4px 30px rgba(0,0,0,0.08); }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 0.6s ease forwards;
+            position: relative;
+            z-index: 1002;
+        }
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--text) !important;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.25rem;
+        }
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 100%;
+            background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(139,92,246,0.1));
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transition: width 0.4s cubic-bezier(0.68,-0.55,0.265,1.55);
+        }
+        .navbar-nav .nav-link:hover { color: var(--primary) !important; transform: translateY(-2px); }
+        .navbar-nav .nav-link:hover::before { width: 120%; }
+        .navbar-nav .nav-link:hover::after  { width: 100%; }
+
+        /* Buttons */
+        .btn-custom {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none !important;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.4s cubic-bezier(0.68,-0.55,0.265,1.55);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            border-radius: 50%;
+            /* background: rgba(255,255,255,0.2); */
+            transform: translate(-50%,-50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        .btn-custom:hover::before { width: 300px; height: 300px; }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(0,212,170,0.3);
+        }
+        .btn-primary-custom:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(0,212,170,0.5);
+            color: white !important;
+        }
+        .btn-outline-custom {
+            background: transparent;
+            color: var(--text) !important;
+            border: 2px solid var(--text) !important;
+        }
+        .btn-outline-custom:hover {
+            background: var(--text);
+            color: white !important;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .btn-white-custom {
+            background: white;
+            color: var(--primary) !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+            font-weight: 700;
+        }
+        .btn-white-custom:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(255,255,255,0.35);
+        }
+        .btn-outline-white-custom {
+            background: transparent;
+            color: white !important;
+            border: 2px solid white !important;
+        }
+        .btn-outline-white-custom:hover {
+            background: white;
+            color: var(--dark) !important;
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .arrow { display: inline-block; transition: transform 0.3s ease; }
+        .btn-custom:hover .arrow { transform: translateX(5px); }
+
+        /* ============ HERO ============ */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 110px;
+            padding-bottom: 5rem;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #dbeafe 100%);
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(0,212,170,0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -400px; right: -200px;
+            animation: floatOrb 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -200px; left: -100px;
+            animation: floatOrb 25s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+        @keyframes floatOrb {
+            0%,100% { transform: translate(0,0) rotate(0deg); }
+            33%      { transform: translate(30px,-30px) rotate(120deg); }
+            66%      { transform: translate(-20px,20px) rotate(240deg); }
+        }
+
+        .hero-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            animation: fadeInUp 0.8s ease-out both;
+        }
+        .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-text > p {
+            font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            max-width: 540px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        .hero-buttons {
+            display: flex; gap: 1rem; flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Visual Card */
+        .visual-card {
+            background: #fff;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.13);
+            border: 1px solid rgba(0,212,170,0.12);
+            transition: all 0.5s ease;
+            animation: fadeInRight 1s ease-out both;
+        }
+        .visual-card:hover {
+            transform: scale(1.02) translateY(-8px);
+            box-shadow: 0 35px 80px rgba(0,0,0,0.18);
+        }
+        .card-header-label {
+            font-size: 1.05rem; font-weight: 700;
+            color: var(--dark); margin-bottom: 1.25rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        .time-entry {
+            display: flex; align-items: center; gap: 1rem;
+            padding: 0.95rem 1.1rem;
+            background: var(--bg-light);
+            border-radius: 14px;
+            margin-bottom: 0.85rem;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .time-entry:last-child { margin-bottom: 0; }
+        .time-entry:hover {
+            transform: translateX(5px);
+            background: rgba(0,212,170,0.06);
+            border-color: rgba(0,212,170,0.25);
+        }
+        .time-dot {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+            background: var(--primary);
+            flex-shrink: 0;
+            animation: pulseDot 2s ease-in-out infinite;
+        }
+        @keyframes pulseDot {
+            0%,100% { transform: scale(1); opacity: 1; }
+            50%      { transform: scale(1.3); opacity: 0.8; }
+        }
+        .time-info { flex: 1; }
+        .time-info h4 { font-size: 0.92rem; font-weight: 600; margin: 0; }
+        .time-info p  { font-size: 0.78rem; color: var(--text-light); margin: 0; }
+        .time-badge {
+            padding: 0.38rem 0.9rem;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: #fff; border-radius: 20px;
+            font-size: 0.82rem; font-weight: 700;
+            white-space: nowrap;
+        }
+
+        /* ============ SECTION COMMONS ============ */
+        .section-padding { padding: 8rem 0; }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+        .section-tag {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(139,92,246,0.1));
+            color: var(--primary);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .section-description {
+            font-size: 1.15rem;
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* ============ FEATURE CARDS ============ */
+        .feature-card {
+            background: var(--bg-light);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 2px solid transparent;
+            transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-14px);
+            border-color: var(--primary);
+            box-shadow: 0 28px 55px rgba(0,212,170,0.18);
+            background: #fff;
+        }
+        .feature-card:hover::before { transform: scaleX(1); }
+
+        .feature-icon {
+            width: 70px; height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            box-shadow: 0 8px 22px rgba(0,212,170,0.28);
+            transition: transform 0.3s ease;
+        }
+        .feature-card:hover .feature-icon { transform: scale(1.1) rotate(5deg); }
+        .feature-card h3 { font-size: 1.35rem; font-weight: 700; margin-bottom: 0.85rem; color: var(--dark); }
+        .feature-card p  { color: var(--text-light); line-height: 1.8; margin: 0; }
+
+        /* ============ BENEFIT ITEMS ============ */
+        .benefit-item {
+            display: flex; align-items: flex-start;
+            gap: 1.5rem; padding: 1.5rem;
+            border-radius: 18px;
+            border: 2px solid transparent;
+            background: rgba(255,255,255,0.5);
+            transition: all 0.35s ease;
+        }
+        .benefit-item:hover {
+            transform: translateX(10px);
+            background: #fff;
+            border-color: rgba(0,212,170,0.25);
+            box-shadow: 0 12px 35px rgba(0,212,170,0.12);
+        }
+        .benefit-icon-box {
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 6px 20px rgba(0,212,170,0.28);
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+        .benefit-item:hover .benefit-icon-box { transform: scale(1.1) rotate(5deg); }
+        .benefit-item h3 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.45rem; color: var(--dark); }
+        .benefit-item p  { color: var(--text-light); line-height: 1.8; margin: 0; }
+
+        /* ============ STATS ============ */
+        .stats-wrap {
+            background: #fff;
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            transition: all 0.5s ease;
+        }
+        .stats-wrap:hover {
+            transform: scale(1.02) translateY(-6px);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.14);
+        }
+        .stats-wrap h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem; font-weight: 700;
+            color: var(--dark); margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 1.75rem 1.25rem;
+            background: var(--bg-light);
+            border-radius: 18px;
+            border: 2px solid transparent;
+            transition: all 0.35s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-6px) scale(1.04);
+            border-color: var(--primary);
+            box-shadow: 0 16px 36px rgba(0,212,170,0.15);
+            background: #fff;
+        }
+        .stat-number {
+            font-size: 2.5rem; font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block; line-height: 1.1; margin-bottom: 0.4rem;
+        }
+        .stat-label { color: var(--text-light); font-size: 0.88rem; font-weight: 500; }
+
+        /* ============ HOW IT WORKS ============ */
+        .step-card {
+            text-align: center;
+            padding: 2.5rem 2rem;
+            border-radius: 24px;
+            border: 2px solid rgba(0,0,0,0.05);
+            background: #fff;
+            position: relative; overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+            height: 100%;
+        }
+        .step-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        .step-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 24px 50px rgba(0,212,170,0.15);
+            border-color: var(--primary);
+        }
+        .step-card:hover::before { transform: scaleX(1); }
+        .step-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.5rem; font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1; margin-bottom: 1rem;
+        }
+        .step-card h3 { font-size: 1.35rem; font-weight: 700; color: var(--dark); margin-bottom: 0.85rem; }
+        .step-card p  { color: var(--text-light); line-height: 1.8; margin: 0; }
+
+        /* ============ AI BANNER ============ */
+        .ai-banner {
+            background: linear-gradient(135deg, var(--accent-purple) 0%, var(--primary) 100%);
+            padding: 5rem 0;
+            color: white;
+            position: relative; overflow: hidden;
+        }
+        .ai-banner::before {
+            content: '';
+            position: absolute; width: 100%; height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .ai-text { position: relative; z-index: 1; }
+        .ai-text h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+            font-weight: 900; margin-bottom: 1rem;
+        }
+        .ai-text p { font-size: 1.1rem; opacity: 0.95; line-height: 1.8; }
+
+        /* ============ INTEGRATIONS ============ */
+        .integration-pill {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: #fff;
+            border: 2px solid rgba(0,0,0,0.07);
+            border-radius: 50px;
+            font-weight: 600; font-size: 0.95rem;
+            color: var(--dark);
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            cursor: default;
+        }
+        .integration-pill:hover {
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 30px rgba(0,212,170,0.2);
+            color: var(--primary);
+        }
+
+        /* ============ CTA ============ */
+        .cta-section {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            color: white; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .cta-section::before {
+            content: '';
+            position: absolute; width: 100%; height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+        .cta-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+        .cta-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900; margin-bottom: 1.5rem; line-height: 1.2;
+        }
+        .cta-content p { font-size: 1.25rem; margin-bottom: 2.5rem; opacity: 0.95; }
+
+        /* ============ FOOTER ============ */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+            position: relative;
+        }
+        .footer::before {
+            content: '';
+            position: absolute; top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        .footer-column h4 { font-size: 1.2rem; margin-bottom: 1.5rem; color: white; font-weight: 700; }
+        .footer-links { list-style: none; padding: 0; margin: 0; }
+        .footer-links li { margin-bottom: 0.8rem; }
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0;
+            width: 0; height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        .footer-links a:hover { color: white; transform: translateX(5px); }
+        .footer-links a:hover::after { width: 100%; }
+
+        .footer-bottom {
+            padding-top: 2rem; margin-top: 3rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+        }
+        .footer-social { display: flex; gap: 1rem; margin-top: 2rem; }
+        .social-icon {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-decoration: none; color: white;
+        }
+        .social-icon:hover {
+            background: var(--primary);
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* ============ SCROLL FADE ============ */
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+        .scroll-fade.visible { opacity: 1; transform: translateY(0); }
+
+        /* ============ RESPONSIVE ============ */
+        @media (max-width: 991px) {
+            .section-padding { padding: 5rem 0; }
+            .ai-text h3 { font-size: 1.75rem; }
+        }
+        @media (max-width: 768px) {
+            .container-custom { padding: 0 1.25rem; }
+            .hero-section { padding-top: 120px; }
+
+            .footer-column {
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                padding: 1rem 0;
+            }
+            .footer-column h4 {
+                cursor: pointer;
+                padding: 0.5rem 0; margin-bottom: 0;
+                display: flex; justify-content: space-between; align-items: center;
+                user-select: none;
+            }
+            .footer-column h4::after {
+                content: '+';
+                font-size: 1.5rem; font-weight: 300;
+                color: var(--primary);
+            }
+            .footer-column.active h4::after { content: '−'; }
+            .footer-links {
+                max-height: 0; overflow: hidden; opacity: 0;
+                transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            }
+            .footer-column.active .footer-links {
+                max-height: 600px; opacity: 1;
+                padding-top: 1rem; padding-bottom: 1rem;
+            }
+            .footer-social {
+                max-height: 0; overflow: hidden; opacity: 0;
+                transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            }
+            .footer-column.active .footer-social {
+                max-height: 200px; opacity: 1; padding-top: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============================================ NAVBAR ============================================ -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid nav-container">
+            <a href="../Home.html" class="logo">DeskTime</a>
+            <button class="navbar-toggler border-0" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto gap-lg-1">
+                    <li class="nav-item"><a class="nav-link" href="../Products/features.html">Features</a></li>
+                   <li class="nav-item"><a class="nav-link" href="../Home.html#solutions">Solutions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Products/Pricingg.html">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Company/aboutus.html">About</a></li>
+                </ul>
+                <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0">
+                    <a href="../login.html" class="btn-custom btn-outline-custom">Log In</a>
+                    <a href="#" class="btn-custom btn-primary-custom">Start Free Trial <span class="arrow">→</span></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ============================================ HERO ============================================ -->
+    <section class="hero-section">
+        <div class="container-custom w-100" style="position:relative;z-index:2">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-text">
+                        <span class="section-tag" style="animation:fadeInUp 0.5s ease-out both">⏱️ TIME TRACKING</span>
+                        <h1>Simplify Employee <span class="highlight">Time Tracking</span> with DeskTime</h1>
+                        <p>Effortlessly track work hours, manage projects, and boost productivity with our intelligent time tracking solution. Get real-time insights and accurate billing for every team.</p>
+                        <div class="hero-buttons">
+                            <a href="#" class="btn-custom btn-primary-custom">Start Free 14-Day Trial <span class="arrow">→</span></a>
+                            <a href="#" class="btn-custom btn-outline-custom">Watch Demo</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="visual-card">
+                        <div class="card-header-label">📋 Today's Activity</div>
+                        <div class="time-entry">
+                            <div class="time-dot"></div>
+                            <div class="time-info">
+                                <h4>Website Redesign</h4>
+                                <p>Active now · Design Team</p>
+                            </div>
+                            <div class="time-badge">2h 34m</div>
+                        </div>
+                        <div class="time-entry">
+                            <div class="time-dot" style="background:var(--accent-blue);animation:none"></div>
+                            <div class="time-info">
+                                <h4>Client Meeting</h4>
+                                <p>Completed · Sales</p>
+                            </div>
+                            <div class="time-badge" style="background:linear-gradient(135deg,var(--accent-blue),#2563eb)">1h 15m</div>
+                        </div>
+                        <div class="time-entry">
+                            <div class="time-dot" style="background:var(--accent-purple);animation:none"></div>
+                            <div class="time-info">
+                                <h4>Code Review</h4>
+                                <p>Completed · Development</p>
+                            </div>
+                            <div class="time-badge" style="background:linear-gradient(135deg,var(--accent-purple),#7c3aed)">45m</div>
+                        </div>
+                        <div class="time-entry">
+                            <div class="time-dot" style="background:#ec4899;animation:none"></div>
+                            <div class="time-info">
+                                <h4>Strategy Planning</h4>
+                                <p>Completed · Management</p>
+                            </div>
+                            <div class="time-badge" style="background:linear-gradient(135deg,#ec4899,#db2777)">1h 02m</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ FEATURES ============================================ -->
+    <section class="section-padding" id="features" style="background:#fff;">
+        <div class="container-custom">
+            <div class="section-header scroll-fade">
+                <span class="section-tag">⚡ POWERFUL FEATURES</span>
+                <h2 class="section-title">Everything You Need to Track Time</h2>
+                <p class="section-description">Comprehensive time tracking tools designed for modern teams and businesses of all sizes.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">⏱️</div>
+                        <h3>Automatic Time Tracking</h3>
+                        <p>Track time automatically as your team works. No manual timers needed. Our intelligent system captures every billable minute without disrupting workflow.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">📊</div>
+                        <h3>Real-Time Dashboards</h3>
+                        <p>Monitor team productivity with live dashboards. See who's working on what, identify bottlenecks, and make data-driven decisions instantly.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">📱</div>
+                        <h3>Multi-Platform Support</h3>
+                        <p>Track time seamlessly across desktop, mobile, and web. Your team can work from anywhere while maintaining accurate, detailed time records.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">💼</div>
+                        <h3>Project Management</h3>
+                        <p>Organise work by projects and clients. Track budgets, monitor progress, and ensure every project stays on schedule and within budget.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">🎯</div>
+                        <h3>Productivity Insights</h3>
+                        <p>Understand how time is spent with detailed analytics. Identify productivity patterns and optimise team performance across every department.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">🔗</div>
+                        <h3>Seamless Integrations</h3>
+                        <p>Connect with your favourite tools like Slack, Asana, Jira, and more. Sync data automatically and streamline workflows end-to-end.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ AI BANNER ============================================ -->
+    <section class="ai-banner">
+        <div class="container-custom">
+            <div class="row g-5">
+                <div class="col-lg-6">
+                    <div class="ai-text scroll-fade">
+                        <h3>AI-Powered Time Intelligence</h3>
+                        <p>Our AI engine learns your team's patterns and surfaces insights you'd never find manually — from hidden time sinks to peak focus windows — helping you optimise every working hour.</p>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="ai-text scroll-fade">
+                        <h3>Automated Reports & Billing</h3>
+                        <p>Stop wasting hours on manual reports. DeskTime auto-generates detailed timesheets, project summaries, and invoices so your team can focus on the work that actually matters.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ BENEFITS + STATS ============================================ -->
+    <section class="section-padding" id="solutions" style="background:linear-gradient(135deg,var(--bg-light) 0%,#e0f2fe 100%);">
+        <div class="container-custom">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="mb-4 scroll-fade">
+                        <span class="section-tag">✨ KEY BENEFITS</span>
+                        <h2 class="section-title" style="text-align:left">Why Choose DeskTime Time Tracking?</h2>
+                        <p class="section-description" style="text-align:left">Built for teams that value accountability, accuracy, and actionable data.</p>
+                    </div>
+                    <div class="d-flex flex-column gap-3">
+                        <div class="benefit-item scroll-fade">
+                            <div class="benefit-icon-box">💰</div>
+                            <div>
+                                <h3>Accurate Billing</h3>
+                                <p>Never lose billable hours again. Automatically capture every minute of work and generate accurate invoices with detailed, granular timesheets.</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item scroll-fade">
+                            <div class="benefit-icon-box">📈</div>
+                            <div>
+                                <h3>Boost Productivity</h3>
+                                <p>Identify time-wasting activities and optimise workflows. Help your team focus on high-value work that drives real, measurable results.</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item scroll-fade">
+                            <div class="benefit-icon-box">🛡️</div>
+                            <div>
+                                <h3>Compliance Ready</h3>
+                                <p>Stay compliant with labour laws and regulations. Maintain detailed records for audits and ensure fair compensation for every team member.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="stats-wrap scroll-fade">
+                        <h3>Performance Metrics</h3>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="stat-card">
+                                    <span class="stat-number">35%</span>
+                                    <div class="stat-label">Productivity Increase</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card">
+                                    <span class="stat-number">20+</span>
+                                    <div class="stat-label">Hours Saved / Month</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card">
+                                    <span class="stat-number">99.9%</span>
+                                    <div class="stat-label">Tracking Accuracy</div>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-card">
+                                    <span class="stat-number">50K+</span>
+                                    <div class="stat-label">Happy Users</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ HOW IT WORKS ============================================ -->
+    <section class="section-padding" id="how-it-works" style="background:var(--bg);">
+        <div class="container-custom">
+            <div class="section-header scroll-fade">
+                <span class="section-tag">🚀 HOW IT WORKS</span>
+                <h2 class="section-title">Up and Running in Minutes</h2>
+                <p class="section-description">No complex setup. No steep learning curve. Just powerful time tracking from day one.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="step-card scroll-fade">
+                        <div class="step-number">01</div>
+                        <h3>Create Your Account</h3>
+                        <p>Sign up for free and set up your workspace in under two minutes. No credit card required to get started.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="step-card scroll-fade">
+                        <div class="step-number">02</div>
+                        <h3>Invite Your Team</h3>
+                        <p>Add team members by email. Set roles, permissions, and departments with just a few clicks.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="step-card scroll-fade">
+                        <div class="step-number">03</div>
+                        <h3>Install the App</h3>
+                        <p>Download DeskTime on desktop or mobile. Time tracking begins automatically the moment you launch it.</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="step-card scroll-fade">
+                        <div class="step-number">04</div>
+                        <h3>Get Insights</h3>
+                        <p>View live dashboards, detailed reports, and AI-powered recommendations from your very first day.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ INTEGRATIONS ============================================ -->
+    <section class="section-padding" style="background:var(--bg-light);">
+        <div class="container-custom">
+            <div class="section-header scroll-fade">
+                <span class="section-tag">🔗 INTEGRATIONS</span>
+                <h2 class="section-title">Works With Your Existing Tools</h2>
+                <p class="section-description">Connect DeskTime with 60+ popular apps and keep your entire workflow seamless.</p>
+            </div>
+            <div class="d-flex flex-wrap gap-3 justify-content-center scroll-fade">
+                <span class="integration-pill">📋 Asana</span>
+                <span class="integration-pill">🎯 Jira</span>
+                <span class="integration-pill">💬 Slack</span>
+                <span class="integration-pill">📁 Google Drive</span>
+                <span class="integration-pill">📅 Google Calendar</span>
+                <span class="integration-pill">🗂️ Trello</span>
+                <span class="integration-pill">💼 Basecamp</span>
+                <span class="integration-pill">📊 QuickBooks</span>
+                <span class="integration-pill">🔵 Monday.com</span>
+                <span class="integration-pill">🟣 Notion</span>
+                <span class="integration-pill">📨 Outlook</span>
+                <span class="integration-pill">⚡ Zapier</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ CTA ============================================ -->
+    <section class="cta-section">
+        <div class="container-custom">
+            <div class="cta-content scroll-fade">
+                <h2>Ready to Transform Your Time Tracking?</h2>
+                <p>Join thousands of teams already saving time and boosting productivity with DeskTime. No credit card required.</p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="#" class="btn-custom btn-white-custom">Start Your Free Trial <span class="arrow">→</span></a>
+                    <a href="#" class="btn-custom btn-outline-white-custom">Contact Sales</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ============================================ FOOTER ============================================ -->
+    <footer class="footer">
+        <div class="container-custom">
+            <div class="row g-5">
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Products</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Products/features.html">Features</a></li>
+                        <li><a href="../Products/Pricingg.html">Pricing</a></li>
+                        <li><a href="#">Integrations</a></li>
+                        <li><a href="#">Get started</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Use Case</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Use Case/product-analytics.html">Productivity Analytics</a></li>
+                        <li><a href="../Use Case/Workforce-Analytics.html">Workforce Analytics</a></li>
+                        <li><a href="../Use Case/Distributed-workforce.html">Distributed Workforce</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Features</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Benchmarks AI</a></li>
+                        <li><a href="../Features/employee-monitoring.html">Employee Monitoring</a></li>
+                        <li><a href="../Features/time-tracking.html">Time Tracking</a></li>
+                        <li><a href="../Features/payroll.html">Payroll</a></li>
+                        <li><a href="../Features/TimeManagement.html">Time Management</a></li>
+                        <li><a href="../Features/Screen_Monitoring.html">Screen Monitoring</a></li>
+                        <li><a href="../Features/attendance.html">Attendance</a></li>
+                        <li><a href="../Features/Unusual_Activity_Report.html">Unusual Activity Report</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Workforce Type</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Workforce Type/remote.html">Remote</a></li>
+                        <li><a href="../Workforce Type/hybrid.html">Hybrid</a></li>
+                        <li><a href="../Workforce Type/in-office.html">In-Office</a></li>
+                        <li><a href="../Workforce Type/enterprise.html">Enterprise</a></li>
+                        <li><a href="../Workforce Type/sme-smb.html">SME &amp; SMB</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Company/aboutus.html">About us</a></li>
+                        <li><a href="../Company/careers.html">Careers</a></li>
+                        <li><a href="../Company/TermsofService.html">Terms Of Service</a></li>
+                        <li><a href="../Company/privancypolicy.html">Privacy Policy</a></li>
+                    </ul>
+                    <div class="footer-social">
+                        <a href="https://linkedin.com" target="_blank" class="social-icon" aria-label="LinkedIn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+                                <circle cx="4" cy="4" r="2"/>
+                            </svg>
+                        </a>
+                        <a href="https://facebook.com" target="_blank" class="social-icon" aria-label="Facebook">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+                            </svg>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" class="social-icon" aria-label="Instagram">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="none" stroke="currentColor" stroke-width="2"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" class="social-icon" aria-label="Twitter">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+                            </svg>
+                        </a>
+                        <a href="https://youtube.com" target="_blank" class="social-icon" aria-label="YouTube">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23 9.7s-.23-1.62-.92-2.33c-.88-.92-1.86-.93-2.31-.98C16.57 6.14 12 6.14 12 6.14s-4.57 0-7.77.25c-.45.05-1.43.06-2.31.98C1.23 8.08 1 9.7 1 9.7S.77 11.55.77 13.4v1.73c0 1.85.23 3.7.23 3.7s.23 1.62.92 2.33c.88.92 2.04.89 2.56.99 1.85.18 7.52.23 7.52.23s4.58-.01 7.77-.26c.45-.05 1.43-.06 2.31-.98.69-.71.92-2.33.92-2.33s.23-1.85.23-3.7v-1.73c0-1.85-.23-3.7-.23-3.7zM9.54 15.57V9.43l6 3.07-6 3.07z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 DeskTime. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll
+        const navbar = document.querySelector('.navbar-custom');
+        window.addEventListener('scroll', () => navbar.classList.toggle('scrolled', window.scrollY > 50));
+
+        // Footer accordion mobile
+        document.querySelectorAll('.footer-column').forEach(col => {
+            col.querySelector('h4')?.addEventListener('click', () => {
+                if (window.innerWidth > 768) return;
+                col.classList.toggle('active');
+            });
+        });
+
+        // Scroll fade with stagger
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting)
+                    setTimeout(() => entry.target.classList.add('visible'), i * 90);
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.scroll-fade').forEach(el => io.observe(el));
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) window.scrollTo({ top: target.offsetTop - 80, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

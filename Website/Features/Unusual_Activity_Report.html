@@ -1,0 +1,1628 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unusual Activity Report - DeskTime Workforce Analytics</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00d4aa;
+            --primary-dark: #00b892;
+            --secondary: #3c5fa9;
+            --dark: #1a1d29;
+            --dark-light: #2a2d3a;
+            --text: #1a1d29;
+            --text-light: #6b7280;
+            --bg: #ffffff;
+            --bg-light: #f8fafc;
+            --accent-purple: #8b5cf6;
+            --accent-blue: #3b82f6;
+            --accent-orange: #f59e0b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background: var(--bg);
+        }
+
+        .container-custom {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ============================================
+           NAVBAR — exact remembered style
+        ============================================ */
+
+        .navbar-custom {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .navbar-custom.scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 0.6s ease forwards;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.25rem;
+        }
+
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transition: width 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .navbar-nav .nav-link:hover::before {
+            width: 120%;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* ── BUTTONS ── */
+        .btn-custom {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn-custom:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(0, 212, 170, 0.5);
+            color: white;
+        }
+
+        .btn-outline-custom {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--text);
+        }
+
+        .btn-outline-custom:hover {
+            background: var(--text);
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-white-custom {
+            background: white;
+            color: var(--accent-blue);
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-white-custom:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.35);
+            color: var(--dark);
+        }
+
+        .btn-outline-white-custom {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline-white-custom:hover {
+            background: white;
+            color: var(--accent-blue);
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .arrow {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .arrow-link:hover .arrow {
+            transform: translateX(5px);
+        }
+
+        /* ============================================
+           HERO
+        ============================================ */
+
+        .hero-section {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            padding-top: 120px;
+            padding-bottom: 80px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #fce7f3 100%);
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 212, 170, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -400px;
+            right: -200px;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 212, 170, 0.12) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -200px;
+            left: -100px;
+            animation: float 28s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(30px, -30px) rotate(120deg);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
+        }
+
+        .hero-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Alert Badges */
+        .alert-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0.25rem;
+            transition: transform 0.3s ease;
+        }
+
+        .alert-badge:hover {
+            transform: translateY(-2px);
+        }
+
+        .alert-high {
+            background: rgba(239, 68, 68, 0.1);
+            color: #dc2626;
+        }
+
+        .alert-medium {
+            background: rgba(245, 158, 11, 0.1);
+            color: #d97706;
+        }
+
+        .alert-low {
+            background: rgba(0, 212, 170, 0.1);
+            color: #00b892;
+        }
+
+        .hero-dashboard {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.1);
+            animation: fadeInRight 1s ease-out;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .hero-dashboard:hover {
+            transform: scale(1.02) translateY(-8px);
+            box-shadow: 0 35px 80px rgba(0, 0, 0, 0.15);
+        }
+
+        /* ============================================
+           SECTION HELPERS
+        ============================================ */
+
+        .section-padding {
+            padding: 8rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto 4rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            color: var(--primary);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .section-tag:hover {
+            transform: translateY(-2px);
+        }
+
+
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            line-height: 1.8;
+            max-width: 720px;
+            margin: 0 auto;
+        }
+
+        /* ============================================
+           FEATURE CARDS
+        ============================================ */
+
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 2px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.06);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 28px 60px rgba(0, 212, 170, 0.2);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 68px;
+            height: 68px;
+            background: linear-gradient(135deg, rgba(59, 130, 246,0.25 ), rgba(59, 130, 246, 0.80));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-icon svg {
+            width: 30px;
+            height: 30px;
+            color: white;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-card h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.85rem;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        /* ============================================
+           DETECTION CARDS
+        ============================================ */
+
+        .detection-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 24px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.35s ease;
+            height: 100%;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .detection-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 28px 60px rgba(0, 212, 170, 0.2);        }
+
+        .detection-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .detection-icon {
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-blue) 100%);
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 8px 22px rgba(0, 212, 170, 0.3);
+            flex-shrink: 0;
+            transition: transform 0.3s ease;
+        }
+
+        .detection-card:hover .detection-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .detection-icon svg {
+            width: 24px;
+            height: 24px;
+            color: white;
+        }
+
+        .detection-card h3 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .detection-card ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 1rem;
+        }
+
+        .detection-card li {
+            padding: 0.45rem 0 0.45rem 1.6rem;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            position: relative;
+            transition: transform 0.2s ease;
+        }
+
+        .detection-card li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .detection-card li:hover {
+            transform: translateX(4px);
+        }
+
+        /* ============================================
+           USE CASE CARDS
+        ============================================ */
+
+        .use-case-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            text-align: center;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(0, 0, 0, 0.05);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.06);
+        }
+
+        .use-case-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .use-case-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 24px 55px rgba(0, 212, 170, 0.18);
+            border-color: var(--primary);
+        }
+
+        .use-case-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .use-case-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-blue) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 8px 22px rgba(0, 212, 170, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .use-case-card:hover .use-case-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .use-case-icon svg {
+            width: 40px;
+            height: 40px;
+            color: white;
+        }
+
+        .use-case-card h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .use-case-card p {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        /* ============================================
+           HOW IT WORKS
+        ============================================ */
+
+        .workflow-step {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2.5rem;
+            align-items: flex-start;
+        }
+
+        .workflow-number {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 8px 22px rgba(0, 212, 170, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .workflow-step:hover .workflow-number {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .workflow-content {
+            flex: 1;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.07);
+            border: 2px solid transparent;
+            transition: all 0.35s ease;
+        }
+
+        .workflow-step:hover .workflow-content {
+          
+            transform: translateX(6px);
+              box-shadow: 0 24px 55px rgba(0, 212, 170, 0.18);
+            border-color: var(--primary);
+        }
+
+        .workflow-content h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--dark);
+        }
+
+        .workflow-content p {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        /* ============================================
+           STATS (dark section)
+        ============================================ */
+
+        .stats-section {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stats-section::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -300px;
+            right: -100px;
+            pointer-events: none;
+        }
+
+        .stats-section::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(0, 212, 170, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -200px;
+            left: -80px;
+            pointer-events: none;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.8rem, 4vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-orange) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            display: block;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 500;
+        }
+
+        /* ============================================
+           CTA SECTION
+        ============================================ */
+
+        .cta-section {
+            padding: 8rem 0;
+            background: var(--bg);
+        }
+
+        .cta-inner {
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            padding: 5rem 4rem;
+            border-radius: 30px;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .cta-inner::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .cta-inner::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -200px;
+            right: -100px;
+            pointer-events: none;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            color: white;
+            margin-bottom: 1.25rem;
+        }
+
+        .cta-content p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+        }
+
+        /* ============================================
+           FOOTER — exact remembered style
+        ============================================ */
+
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        .footer-column h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-decoration: none;
+            color: white;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* ============================================
+           SCROLL FADE
+        ============================================ */
+
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+
+        .scroll-fade.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+
+        @media (max-width: 991px) {
+            .section-padding {
+                padding: 5rem 0;
+            }
+
+            .stats-section {
+                padding: 5rem 0;
+            }
+
+            .cta-section {
+                padding: 5rem 0;
+            }
+
+            .cta-inner {
+                padding: 3rem 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container-custom {
+                padding: 0 1.25rem;
+            }
+
+            .hero-section {
+                padding-top: 110px;
+                padding-bottom: 4rem;
+            }
+
+            .workflow-step {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .footer-column {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 1rem 0;
+            }
+
+            .footer-column h4 {
+                cursor: pointer;
+                padding: 0.5rem 0;
+                margin-bottom: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                user-select: none;
+            }
+
+            .footer-column h4::after {
+                content: '+';
+                font-size: 1.5rem;
+                font-weight: 300;
+                color: var(--primary);
+            }
+
+            .footer-column.active h4::after {
+                content: '−';
+            }
+
+            .footer-links {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            }
+
+            .footer-column.active .footer-links {
+                max-height: 600px;
+                opacity: 1;
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+
+            .footer-social {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            }
+
+            .footer-column.active .footer-social {
+                max-height: 200px;
+                opacity: 1;
+                padding-top: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ══════════════ NAVBAR ══════════════ -->
+    <nav class="navbar navbar-expand-lg navbar-custom" id="mainNav">
+        <div class="container-fluid nav-container">
+            <a href="../Home.html" class="logo">DeskTime</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+                aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav mx-auto gap-lg-1">
+                    <li class="nav-item"><a class="nav-link" href="../Products/features.html">Features</a></li>
+                  <li class="nav-item"><a class="nav-link" href="../Home.html#solutions">Solutions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Products/Pricingg.html">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Company/aboutus.html">About</a></li>
+                </ul>
+                <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0">
+                    <a href="../login.html" class="btn-custom btn-outline-custom">Log In</a>
+                    <a href="#" class="btn-custom btn-primary-custom arrow-link">Start Free Trial <span
+                            class="arrow">→</span></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ══════════════ HERO ══════════════ -->
+    <section class="hero-section">
+        <div class="container-custom w-100" style="position:relative;z-index:2">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-text scroll-fade">
+                        <h1>Detect <span class="highlight">Unusual Activity</span> Before It Becomes a Problem</h1>
+                        <p
+                            style="font-size:clamp(1.05rem,1.8vw,1.2rem);color:var(--text-light);margin-bottom:1.5rem;line-height:1.8;max-width:540px">
+                            AI-powered anomaly detection that identifies irregular work patterns, suspicious behaviors,
+                            and potential security risks in real-time—helping you protect your business and support your
+                            team.
+                        </p>
+                        <div class="mb-4">
+                            <span class="alert-badge alert-high">🔴 High Priority Alerts</span>
+                            <span class="alert-badge alert-medium">🟠 Medium Risk Alerts</span>
+                            <span class="alert-badge alert-low">🟡 Low Priority Alerts</span>
+                        </div>
+                        <div class="hero-buttons">
+                            <a href="#" class="btn-custom btn-primary-custom arrow-link">Start Free Trial <span
+                                    class="arrow">→</span></a>
+                            <a href="#" class="btn-custom btn-outline-custom">See Demo</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-dashboard scroll-fade">
+                        <svg width="100%" viewBox="0 0 500 350" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <rect x="20" y="20" width="460" height="310" rx="10" fill="#fef3c7" />
+                            <rect x="40" y="40" width="200" height="80" rx="8" fill="white" stroke="#fecaca"
+                                stroke-width="3" />
+                            <circle cx="70" cy="70" r="12" fill="#ef4444" />
+                            <rect x="90" y="62" width="120" height="6" rx="3" fill="#fecaca" />
+                            <rect x="90" y="75" width="90" height="4" rx="2" fill="#fde68a" />
+                            <rect x="260" y="40" width="200" height="80" rx="8" fill="white" stroke="#fed7aa"
+                                stroke-width="2" />
+                            <circle cx="290" cy="70" r="12" fill="#f59e0b" />
+                            <rect x="310" y="62" width="120" height="6" rx="3" fill="#fed7aa" />
+                            <rect x="310" y="75" width="100" height="4" rx="2" fill="#fde68a" />
+                            <rect x="40" y="140" width="420" height="170" rx="8" fill="white" stroke="#e0e7ff"
+                                stroke-width="2" />
+                            <circle cx="80" cy="220" r="8" fill="#ef4444" />
+                            <circle cx="150" cy="200" r="8" fill="#f59e0b" />
+                            <circle cx="220" cy="240" r="8" fill="#eab308" />
+                            <circle cx="290" cy="210" r="8" fill="#f59e0b" />
+                            <circle cx="360" cy="190" r="8" fill="#ef4444" />
+                            <circle cx="420" cy="230" r="8" fill="#eab308" />
+                            <line x1="60" y1="270" x2="440" y2="270" stroke="#e0e7ff" stroke-width="2" />
+                            <text x="60" y="295" font-family="Outfit" font-size="10" fill="#6b7280">00:00</text>
+                            <text x="220" y="295" font-family="Outfit" font-size="10" fill="#6b7280">12:00</text>
+                            <text x="410" y="295" font-family="Outfit" font-size="10" fill="#6b7280">23:59</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ FEATURES ══════════════ -->
+    <section class="section-padding" style="background:var(--bg)">
+        <div class="container-custom">
+            <div class="section-header scroll-fade">
+                <span class="section-tag section-tag-orange">INTELLIGENT DETECTION</span>
+                <h2 class="section-title">AI-Powered Security & Insights</h2>
+                <p class="section-subtitle">Our machine learning algorithms analyze millions of data points to identify
+                    patterns that deviate from normal behavior—protecting your business 24/7.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                            </svg>
+                        </div>
+                        <h3>Real-Time Alerts</h3>
+                        <p>Get instant notifications when unusual activity is detected. Customizable alert thresholds
+                            ensure you're informed about what matters most to your business.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M13 10V3L4 14h7v7l9-11h-7z" />
+                            </svg>
+                        </div>
+                        <h3>Behavioral Analysis</h3>
+                        <p>AI learns each employee's typical work patterns and flags significant deviations. Identifies
+                            after-hours access, unusual data transfers, and workflow anomalies.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <h3>Security Monitoring</h3>
+                        <p>Detect potential security threats including unauthorized access attempts, suspicious file
+                            downloads, and unusual application usage patterns.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <h3>Productivity Insights</h3>
+                        <p>Identify productivity bottlenecks and burnout signals. Track sudden drops in activity,
+                            unusual overtime patterns, and work-life balance indicators.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+                            </svg>
+                        </div>
+                        <h3>Trend Analysis</h3>
+                        <p>Historical data analysis reveals long-term patterns and trends. Predictive analytics help you
+                            anticipate issues before they escalate.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <h3>Detailed Reports</h3>
+                        <p>Comprehensive activity reports with full audit trails. Export data for compliance,
+                            investigations, or performance reviews with one click.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ DETECTION TYPES ══════════════ -->
+    <section class="section-padding" style="background:var(--bg-light)">
+        <div class="container-custom">
+            <div class="section-header scroll-fade">
+                <span class="section-tag section-tag-orange">DETECTION CAPABILITIES</span>
+                <h2 class="section-title">What We Monitor</h2>
+                <p class="section-subtitle">Our comprehensive anomaly detection covers all aspects of workplace activity
+                    to keep your team productive and your data secure.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="detection-card scroll-fade">
+                        <div class="detection-header">
+                            <div class="detection-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                            </div>
+                            <h3>Time & Attendance Anomalies</h3>
+                        </div>
+                        <ul>
+                            <li>Unusual login times or locations</li>
+                            <li>Excessive overtime patterns</li>
+                            <li>Irregular break schedules</li>
+                            <li>Time clock manipulation attempts</li>
+                            <li>Abnormal absence patterns</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="detection-card scroll-fade">
+                        <div class="detection-header">
+                            <div class="detection-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                            </div>
+                            <h3>Data & File Activity</h3>
+                        </div>
+                        <ul>
+                            <li>Large file downloads or uploads</li>
+                            <li>Access to restricted folders</li>
+                            <li>Unusual data transfer volumes</li>
+                            <li>File sharing to external sources</li>
+                            <li>Mass file deletions or modifications</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="detection-card scroll-fade">
+                        <div class="detection-header">
+                            <div class="detection-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                                </svg>
+                            </div>
+                            <h3>Application Usage</h3>
+                        </div>
+                        <ul>
+                            <li>Unauthorized software installations</li>
+                            <li>Sudden changes in app usage patterns</li>
+                            <li>Access to prohibited applications</li>
+                            <li>Unusual browser activity</li>
+                            <li>Multiple concurrent logins</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="detection-card scroll-fade">
+                        <div class="detection-header">
+                            <div class="detection-icon">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                </svg>
+                            </div>
+                            <h3>Performance Indicators</h3>
+                        </div>
+                        <ul>
+                            <li>Sudden productivity drops</li>
+                            <li>Extended periods of inactivity</li>
+                            <li>Unusual mouse/keyboard patterns</li>
+                            <li>Signs of burnout or overwork</li>
+                            <li>Rapid task switching behaviors</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ USE CASES ══════════════ -->
+    <section class="section-padding" style="background:var(--bg)">
+        <div class="container-custom">
+            <div class="section-header scroll-fade">
+                <span class="section-tag">USE CASES</span>
+                <h2 class="section-title">Who Benefits Most</h2>
+                <p class="section-subtitle">Unusual activity reports provide value across departments and use cases,
+                    from security to HR to operations.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="use-case-card scroll-fade">
+                        <div class="use-case-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <h3>IT Security Teams</h3>
+                        <p>Detect and prevent security breaches, unauthorized access, and potential data theft with
+                            comprehensive monitoring and instant alerts.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="use-case-card scroll-fade">
+                        <div class="use-case-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                            </svg>
+                        </div>
+                        <h3>HR & Compliance</h3>
+                        <p>Identify policy violations, ensure compliance with regulations, and support investigations
+                            with detailed audit trails and documentation.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="use-case-card scroll-fade">
+                        <div class="use-case-icon">
+                            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <h3>Operations Managers</h3>
+                        <p>Optimize workforce productivity, identify bottlenecks, and support team members showing signs
+                            of burnout or disengagement.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ HOW IT WORKS ══════════════ -->
+    <section class="section-padding" style="background:var(--bg-light)">
+        <div class="container-custom">
+            <div class="section-header scroll-fade">
+                <span class="section-tag section-tag-orange">HOW IT WORKS</span>
+                <h2 class="section-title">From Detection to Action</h2>
+                <p class="section-subtitle">Our intelligent system continuously monitors, analyzes, and alerts you to
+                    unusual activity—all while maintaining employee privacy and trust.</p>
+            </div>
+            <div style="max-width:900px;margin:0 auto">
+                <div class="workflow-step scroll-fade">
+                    <div class="workflow-number">1</div>
+                    <div class="workflow-content">
+                        <h3>Continuous Monitoring</h3>
+                        <p>Our lightweight agent runs quietly in the background, collecting anonymized data about work
+                            patterns, application usage, and system activity without impacting performance.</p>
+                    </div>
+                </div>
+                <div class="workflow-step scroll-fade">
+                    <div class="workflow-number">2</div>
+                    <div class="workflow-content">
+                        <h3>AI-Powered Analysis</h3>
+                        <p>Machine learning algorithms establish baseline patterns for each user and team, then identify
+                            statistical anomalies that deviate from normal behavior.</p>
+                    </div>
+                </div>
+                <div class="workflow-step scroll-fade">
+                    <div class="workflow-number">3</div>
+                    <div class="workflow-content">
+                        <h3>Smart Alerting</h3>
+                        <p>When unusual activity is detected, the system generates prioritized alerts based on severity.
+                            Choose email, Slack, or in-app notifications for your preferred channels.</p>
+                    </div>
+                </div>
+                <div class="workflow-step scroll-fade">
+                    <div class="workflow-number">4</div>
+                    <div class="workflow-content">
+                        <h3>Investigation & Action</h3>
+                        <p>Review detailed activity reports, drill down into specific events, and take appropriate
+                            action—whether that's a security response, employee support, or policy adjustment.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ STATS ══════════════ -->
+    <section class="stats-section">
+        <div class="container-custom" style="position:relative;z-index:2">
+            <div class="row g-4 text-center">
+                <div class="col-6 col-lg-3">
+                    <div class="stat-item scroll-fade">
+                        <span class="stat-number">99.7%</span>
+                        <div class="stat-label">Detection Accuracy</div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="stat-item scroll-fade">
+                        <span class="stat-number">&lt;5min</span>
+                        <div class="stat-label">Alert Response Time</div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="stat-item scroll-fade">
+                        <span class="stat-number">67%</span>
+                        <div class="stat-label">Reduction in Security Incidents</div>
+                    </div>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <div class="stat-item scroll-fade">
+                        <span class="stat-number">24/7</span>
+                        <div class="stat-label">Continuous Protection</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ CTA ══════════════ -->
+    <section class="cta-section">
+        <div class="container-custom">
+            <div class="cta-inner scroll-fade">
+                <div class="cta-content">
+                    <h2>Stay One Step Ahead</h2>
+                    <p>Don't wait for a security breach or compliance issue. Start detecting unusual activity today with
+                        DeskTime's intelligent monitoring solution.</p>
+                    <div class="d-flex gap-3 justify-content-center flex-wrap">
+                        <a href="#signup" class="btn-custom btn-white-custom arrow-link">Start Free Trial <span
+                                class="arrow">→</span></a>
+                        <a href="#demo" class="btn-custom btn-outline-white-custom">Schedule a Demo</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ FOOTER ══════════════ -->
+    <footer class="footer">
+        <div class="container-custom">
+            <div class="row g-5">
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Products</h4>
+                    <ul class="footer-links">
+                       <li><a href="../Products/features.html">Features</a></li>
+                        <li><a href="../Products/Pricingg.html">Pricing</a></li>
+                        <li><a href="#">Integrations</a></li>
+                        <li><a href="#">Get started</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Use Case</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Use Case/product-analytics.html">Productivity Analytics</a></li>
+                        <li><a href="../Use Case/Workforce-Analytics.html">Workforce Analytics</a></li>
+                        <li><a href="../Use Case/Distributed-workforce.html">Distributed Workforce</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Features</h4>
+                    <ul class="footer-links">
+                         <li><a href="#">Benchmarks AI</a></li>
+                        <li><a href="../Features/employee-monitoring.html">Employee Monitoring</a></li>
+                        <li><a href="../Features/time-tracking.html">Time Tracking</a></li>
+                        <li><a href="../Features/payroll.html">Payroll</a></li>
+                        <li><a href="../Features/TimeManagement.html">Time Management</a></li>
+                        <li><a href="../Features/Screen_Monitoring.html">Screen Monitoring</a></li>
+                        <li><a href="../Features/attendance.html">Attendance</a></li>
+                        <li><a href="../Features/Unusual_Activity_Report.html">Unusual Activity Report</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Workforce Type</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Workforce Type/remote.html">Remote</a></li>
+                        <li><a href="../Workforce Type/hybrid.html">Hybrid</a></li>
+                        <li><a href="../Workforce Type/in-office.html">In-Office</a></li>
+                        <li><a href="../Workforce Type/enterprise.html">Enterprise</a></li>
+                        <li><a href="../Workforce Type/sme-smb.html">SME & SMB</a></li>
+                     </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                       <li><a href="../Company/aboutus.html">About us</a></li>
+                        <li><a href="../Company/careers.html">Careers</a></li>
+                        <li><a href="../Company/TermsofService.html">Terms Of Service</a></li>
+                        <li><a href="../Company/privancypolicy.html">Privacy Policy</a></li>
+                       </ul>
+                    <div class="footer-social">
+                        <a href="https://linkedin.com" target="_blank" class="social-icon" aria-label="LinkedIn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
+                                <circle cx="4" cy="4" r="2" />
+                            </svg>
+                        </a>
+                        <a href="https://facebook.com" target="_blank" class="social-icon" aria-label="Facebook">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
+                            </svg>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" class="social-icon" aria-label="Instagram">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                                <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="none" stroke="currentColor"
+                                    stroke-width="2" />
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2" />
+                            </svg>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" class="social-icon" aria-label="Twitter">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
+                            </svg>
+                        </a>
+                        <a href="https://youtube.com" target="_blank" class="social-icon" aria-label="YouTube">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M23 9.7s-.23-1.62-.92-2.33c-.88-.92-1.86-.93-2.31-.98C16.57 6.14 12 6.14 12 6.14s-4.57 0-7.77.25c-.45.05-1.43.06-2.31.98C1.23 8.08 1 9.7 1 9.7S.77 11.55.77 13.4v1.73c0 1.85.23 3.7.23 3.7s.23 1.62.92 2.33c.88.92 2.04.89 2.56.99 1.85.18 7.52.23 7.52.23s4.58-.01 7.77-.26c.45-.05 1.43-.06 2.31-.98.69-.71.92-2.33.92-2.33s.23-1.85.23-3.7v-1.73c0-1.85-.23-3.7-.23-3.7zM9.54 15.57V9.43l6 3.07-6 3.07z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 DeskTime. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Navbar scroll effect
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 50));
+
+        // Footer accordion for mobile
+        document.querySelectorAll('.footer-column').forEach(col => {
+            col.querySelector('h4')?.addEventListener('click', () => {
+                if (window.innerWidth > 768) return;
+                col.classList.toggle('active');
+            });
+        });
+
+        // Scroll fade (IntersectionObserver)
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting)
+                    setTimeout(() => entry.target.classList.add('visible'), i * 90);
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.scroll-fade').forEach(el => io.observe(el));
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const t = document.querySelector(a.getAttribute('href'));
+                if (!t) return;
+                e.preventDefault();
+                window.scrollTo({ top: t.offsetTop - 82, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+
+</html>

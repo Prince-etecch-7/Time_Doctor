@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Tracking Software - DeskTime</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #00d4aa;
+            --primary-dark: #00b892;
+            --secondary: #ff6b6b;
+            --dark: #1a1d29;
+            --dark-light: #2a2d3a;
+            --text: #1a1d29;
+            --text-light: #6b7280;
+            --bg: #ffffff;
+            --bg-light: #f8fafc;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-blue: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background: var(--bg);
+        }
+
+        .container-custom {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ============================================
+           REMEMBERED NAVBAR STYLES
+        ============================================ */
+
+        .navbar-custom {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .navbar-custom.scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            color: var(--dark);
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            z-index: 1002;
+            position: relative;
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 0.6s ease forwards;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.25rem;
+        }
+
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .navbar-nav .nav-link:hover::before {
+            width: 120%;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transition: width 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* ============================================
+           FIXED BUTTON STYLES - WORKING HOVER
+        ============================================ */
+
+        .btn-custom {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none !important;
+            transition: all 0.3s ease !important;
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            display: inline-block;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%) !important;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 30px rgba(0, 212, 170, 0.5) !important;
+            background: linear-gradient(135deg, #00e0ba 0%, #00c9a0 100%) !important;
+            color: white !important;
+        }
+
+        .btn-outline-custom {
+            background: transparent !important;
+            color: var(--text) !important;
+            border: 2px solid var(--text) !important;
+        }
+
+        .btn-outline-custom:hover {
+            background: var(--text) !important;
+            color: white !important;
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .btn-white {
+            background: white !important;
+            color: var(--primary) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-white:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.4) !important;
+            background: #f8f9fa !important;
+            color: var(--primary) !important;
+        }
+
+        .btn-outline-white {
+            border: 2px solid white !important;
+            color: white !important;
+            background: transparent !important;
+        }
+
+        .btn-outline-white:hover {
+            background: white !important;
+            color: var(--dark) !important;
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.3) !important;
+        }
+
+        /* Arrow animation */
+        .arrow-link {
+            position: relative;
+            display: inline-block;
+        }
+
+        .arrow {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .arrow-link:hover .arrow {
+            transform: translateX(5px);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            padding-top: 120px;
+            padding-bottom: 80px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #fce7f3 100%);
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 212, 170, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -300px;
+            right: -200px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(120deg); }
+            66% { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        .hero-content h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .hero-content p {
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .hero-image {
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            background: white;
+            padding: 2rem;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            font-size: 5rem;
+        }
+
+        .hero-image:hover {
+            transform: scale(1.02) translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            padding: 80px 0;
+            background: white;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-item h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .stat-item:hover h3 {
+            transform: scale(1.05);
+        }
+
+        .stat-item p {
+            color: var(--text-light);
+            font-size: 1.1rem;
+        }
+
+        /* Section Styling */
+        .section-padding {
+            padding: 100px 0;
+        }
+
+        .section-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        /* Feature Cards */
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+            border: 2px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--primary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent-purple);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        /* Step Cards */
+        .step-card {
+            text-align: center;
+        }
+
+        .step-number {
+            width: 100px;
+            height: 100px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: white;
+            margin: 0 auto 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .step-card:hover .step-number {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .step-card h4 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .step-card p {
+            color: var(--text-light);
+            line-height: 1.7;
+        }
+
+        /* Benefit Section */
+        .benefit-content h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 2.5rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .benefit-content p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .benefit-list {
+            list-style: none;
+            margin-bottom: 2rem;
+            padding: 0;
+        }
+
+        .benefit-list li {
+            padding: 0.75rem 0;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .benefit-list li::before {
+            content: '✓';
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        .benefit-image {
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            background: linear-gradient(135deg, #e0f2fe 0%, #fce7f3 100%);
+            padding: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            font-size: 5rem;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .benefit-image:hover {
+            transform: scale(1.02) translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Use Case Cards */
+        .use-case-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+            border: 2px solid rgba(0, 0, 0, 0.05);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .use-case-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 0;
+            background: linear-gradient(180deg, var(--primary), var(--accent-purple));
+            transition: height 0.5s ease;
+        }
+
+        .use-case-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary);
+        }
+
+        .use-case-card:hover::before {
+            height: 100%;
+        }
+
+        .use-case-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .use-case-card:hover .use-case-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .use-case-card h4 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .use-case-card p {
+            color: var(--text-light);
+            line-height: 1.7;
+            margin-bottom: 0;
+        }
+
+        /* Integration Cards */
+        .integration-logo {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 16px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-light);
+            transition: all 0.3s ease;
+        }
+
+        .integration-logo:hover {
+            background: white;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transform: translateY(-5px);
+            color: var(--primary);
+        }
+
+        /* Testimonial Cards */
+        .testimonial-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            height: 100%;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 2px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .testimonial-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border-color: var(--accent-purple);
+        }
+
+        .testimonial-text {
+            font-size: 1.1rem;
+            color: var(--text);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .author-info h5 {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.25rem;
+        }
+
+        .author-info p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 0;
+        }
+
+        /* FAQ Items */
+        .faq-item {
+            background: var(--bg-light);
+            padding: 2rem;
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .faq-item:hover {
+            background: white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
+            transform: translateX(5px);
+        }
+
+        .faq-question {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .faq-answer {
+            color: var(--text-light);
+            line-height: 1.7;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--dark) 0%, var(--dark-light) 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.3;
+        }
+
+        .cta-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-content p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        /* ============================================
+           REMEMBERED FOOTER STYLES
+        ============================================ */
+
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        .footer-column h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-decoration: none;
+            color: white;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* Scroll animations */
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .scroll-fade.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile Footer Accordion */
+        @media (max-width: 768px) {
+            .container-custom {
+                padding: 0 1.5rem;
+            }
+
+            .section-padding {
+                padding: 60px 0;
+            }
+
+            .footer-column {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 1rem 0;
+            }
+
+            .footer-column h4 {
+                cursor: pointer;
+                padding: 0.5rem 0;
+                margin-bottom: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                user-select: none;
+            }
+
+            .footer-column h4::after {
+                content: '+';
+                font-size: 1.5rem;
+                font-weight: 300;
+                color: var(--primary);
+                transition: transform 0.3s ease;
+            }
+
+            .footer-column.active h4::after {
+                content: '−';
+            }
+
+            .footer-links {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            }
+
+            .footer-column.active .footer-links {
+                max-height: 600px;
+                opacity: 1;
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+
+            .footer-social {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            }
+
+            .footer-column.active .footer-social {
+                max-height: 200px;
+                opacity: 1;
+                padding-top: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid nav-container">
+            <a href="../Home.html" class="logo">DeskTime</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item"><a class="nav-link" href="../Products/features.html">Features</a></li>
+                   <li class="nav-item"><a class="nav-link" href="../Home.html#solutions">Solutions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Products/Pricingg.html">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Company/aboutus.html">About</a></li>
+                </ul>
+                <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0">
+                    <a href="../login.html" class="btn-custom btn-outline-custom">Login</a>
+                    <a href="#" class="btn-custom btn-primary-custom arrow-link">Start Free Trial <span class="arrow">→</span></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container-custom">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content scroll-fade">
+                        <h1>Automated Attendance Tracking</h1>
+                        <p>
+                            Say goodbye to manual timesheets. Track employee attendance automatically 
+                            with precise clock-in/clock-out times, break tracking, and real-time reporting 
+                            for remote, hybrid, and in-office teams.
+                        </p>
+                        <div class="d-flex gap-3 flex-wrap">
+                            <a href="#" class="btn-custom btn-primary-custom arrow-link">Start free trial <span class="arrow">→</span></a>
+                            <a href="#" class="btn-custom btn-outline-custom">Watch demo</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image scroll-fade">
+                        📊
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats-section">
+        <div class="container-custom">
+            <div class="row g-4 text-center">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item scroll-fade">
+                        <h3>99.9%</h3>
+                        <p>Accuracy rate</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item scroll-fade">
+                        <h3>80%</h3>
+                        <p>Time saved on admin</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item scroll-fade">
+                        <h3>100%</h3>
+                        <p>Automated tracking</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item scroll-fade">
+                        <h3>Real-time</h3>
+                        <p>Attendance reports</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section-padding" style="background: var(--bg);">
+        <div class="container-custom">
+            <div class="section-header text-center mx-auto scroll-fade" style="max-width: 800px; margin-bottom: 4rem;">
+                <h2>Complete attendance management</h2>
+                <p>
+                    Everything you need to track, manage, and optimize your team's 
+                    attendance in one powerful platform.
+                </p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">⏰</div>
+                        <h3>Automatic clock-in/out</h3>
+                        <p>
+                            Employees are automatically clocked in when they start working and 
+                            clocked out when they finish. No manual entries, no forgotten timesheets.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">☕</div>
+                        <h3>Break time tracking</h3>
+                        <p>
+                            Monitor break times and ensure compliance with labor regulations. 
+                            Automatically track lunch breaks and rest periods.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">📍</div>
+                        <h3>Location tracking</h3>
+                        <p>
+                            Optional GPS tracking for field teams and mobile workers. Verify 
+                            attendance from specific locations or work sites.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">📅</div>
+                        <h3>Shift scheduling</h3>
+                        <p>
+                            Create and manage employee schedules, track shift changes, and 
+                            ensure proper coverage across all time zones.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">🔔</div>
+                        <h3>Late arrival alerts</h3>
+                        <p>
+                            Receive instant notifications when employees are late or absent. 
+                            Set custom rules for different teams and roles.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">🏥</div>
+                        <h3>Leave management</h3>
+                        <p>
+                            Track PTO, sick days, and vacation time. Approve or deny requests 
+                            with a simple workflow and maintain leave balances.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">📊</div>
+                        <h3>Attendance reports</h3>
+                        <p>
+                            Generate detailed reports on attendance patterns, overtime, absences, 
+                            and compliance for payroll and HR.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">⏱️</div>
+                        <h3>Overtime tracking</h3>
+                        <p>
+                            Automatically calculate overtime hours based on your company policies. 
+                            Prevent burnout with overtime alerts.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">🔐</div>
+                        <h3>Compliance ready</h3>
+                        <p>
+                            Stay compliant with labor laws and regulations. Export records for 
+                            audits and maintain accurate historical data.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="section-padding" style="background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);">
+        <div class="container-custom">
+            <div class="section-header text-center mx-auto scroll-fade" style="max-width: 800px; margin-bottom: 4rem;">
+                <h2>How it works</h2>
+                <p>Get started with automated attendance tracking in minutes</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="step-card scroll-fade">
+                        <div class="step-number">1</div>
+                        <h4>Install & setup</h4>
+                        <p>
+                            Download the Time Doctor app on desktop or mobile. Set up your 
+                            team, define work hours, and configure attendance rules.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="step-card scroll-fade">
+                        <div class="step-number">2</div>
+                        <h4>Automatic tracking</h4>
+                        <p>
+                            Employees start working and attendance is automatically logged. 
+                            No manual clock-ins, no forgotten entries.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="step-card scroll-fade">
+                        <div class="step-number">3</div>
+                        <h4>Monitor & report</h4>
+                        <p>
+                            View real-time attendance dashboards, get alerts for issues, 
+                            and export reports for payroll and compliance.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Benefits Section -->
+    <section class="section-padding" style="background: white;">
+        <div class="container-custom">
+            <div class="row g-5 align-items-center mb-5">
+                <div class="col-lg-6">
+                    <div class="benefit-content scroll-fade">
+                        <h3>Eliminate timesheet fraud</h3>
+                        <p>
+                            Automated tracking prevents buddy punching, inflated hours, and 
+                            inaccurate time reporting. Get precise data on when work actually happens.
+                        </p>
+                        <ul class="benefit-list">
+                            <li>Automatic screenshot verification</li>
+                            <li>Activity level monitoring</li>
+                            <li>Detailed audit trails</li>
+                            <li>Real-time attendance validation</li>
+                        </ul>
+                        <a href="#" class="btn-custom btn-primary-custom arrow-link">Learn more <span class="arrow">→</span></a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="benefit-image scroll-fade">
+                        🛡️
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-5 align-items-center mb-5">
+                <div class="col-lg-6 order-lg-2">
+                    <div class="benefit-content scroll-fade">
+                        <h3>Simplify payroll processing</h3>
+                        <p>
+                            Export accurate attendance data directly to your payroll system. 
+                            Eliminate errors, reduce processing time, and ensure employees are 
+                            paid correctly for their time.
+                        </p>
+                        <ul class="benefit-list">
+                            <li>Automated timesheet generation</li>
+                            <li>Overtime calculations</li>
+                            <li>Integration with payroll software</li>
+                            <li>Customizable pay periods</li>
+                        </ul>
+                        <a href="#" class="btn-custom btn-primary-custom arrow-link">See integrations <span class="arrow">→</span></a>
+                    </div>
+                </div>
+                <div class="col-lg-6 order-lg-1">
+                    <div class="benefit-image scroll-fade">
+                        💰
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="benefit-content scroll-fade">
+                        <h3>Improve productivity insights</h3>
+                        <p>
+                            Understand attendance patterns and their impact on team performance. 
+                            Identify trends, optimize schedules, and make data-driven decisions.
+                        </p>
+                        <ul class="benefit-list">
+                            <li>Attendance pattern analysis</li>
+                            <li>Productivity correlation reports</li>
+                            <li>Team availability dashboards</li>
+                            <li>Custom analytics and metrics</li>
+                        </ul>
+                        <a href="#" class="btn-custom btn-primary-custom arrow-link">View analytics <span class="arrow">→</span></a>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="benefit-image scroll-fade">
+                        📈
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Use Cases Section -->
+    <section class="section-padding" style="background: linear-gradient(135deg, #f8fafc 0%, #fce7f3 100%);">
+        <div class="container-custom">
+            <div class="section-header text-center mx-auto scroll-fade" style="max-width: 800px; margin-bottom: 4rem;">
+                <h2>Built for every team</h2>
+                <p>Attendance tracking that adapts to your unique work environment</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-6">
+                    <div class="use-case-card scroll-fade">
+                        <div class="use-case-icon">🏠</div>
+                        <h4>Remote teams</h4>
+                        <p>
+                            Track attendance across time zones with automatic clock-in/out. 
+                            Monitor work hours and ensure consistent availability for distributed teams.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="use-case-card scroll-fade">
+                        <div class="use-case-icon">🏢</div>
+                        <h4>Hybrid workforces</h4>
+                        <p>
+                            Manage attendance for employees working from home and the office. 
+                            Unified tracking regardless of location.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="use-case-card scroll-fade">
+                        <div class="use-case-icon">📱</div>
+                        <h4>Field workers</h4>
+                        <p>
+                            GPS-based attendance for mobile teams. Verify on-site presence and 
+                            track attendance from job sites and client locations.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="use-case-card scroll-fade">
+                        <div class="use-case-icon">⏰</div>
+                        <h4>Shift workers</h4>
+                        <p>
+                            Manage complex shift schedules with automatic tracking. Handle 
+                            multiple shifts, rotations, and overtime calculations.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="use-case-card scroll-fade">
+                        <div class="use-case-icon">🌐</div>
+                        <h4>Global companies</h4>
+                        <p>
+                            Coordinate attendance across multiple countries and time zones. 
+                            Comply with local labor regulations automatically.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-lg-6">
+                    <div class="use-case-card scroll-fade">
+                        <div class="use-case-icon">👥</div>
+                        <h4>Large enterprises</h4>
+                        <p>
+                            Scale attendance tracking for thousands of employees. Department-level 
+                            reporting and multi-tier approval workflows.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Integration Section -->
+    <section class="section-padding text-center" style="background: white;">
+        <div class="container-custom">
+            <div class="section-header mx-auto scroll-fade" style="max-width: 800px; margin-bottom: 4rem;">
+                <h2>Seamless integrations</h2>
+                <p>Connect Time Doctor with your existing HR and payroll tools</p>
+            </div>
+
+            <div class="row g-4 mb-5">
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="integration-logo scroll-fade">ADP</div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="integration-logo scroll-fade">Gusto</div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="integration-logo scroll-fade">QuickBooks</div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="integration-logo scroll-fade">Paychex</div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="integration-logo scroll-fade">BambooHR</div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="integration-logo scroll-fade">Workday</div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="integration-logo scroll-fade">Zenefits</div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="integration-logo scroll-fade">Rippling</div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="integration-logo scroll-fade">Namely</div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="integration-logo scroll-fade">Paylocity</div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="integration-logo scroll-fade">SAP</div>
+                </div>
+                <div class="col-lg-2 col-md-4 col-6">
+                    <div class="integration-logo scroll-fade">Oracle</div>
+                </div>
+            </div>
+
+            <a href="#" class="btn-custom btn-primary-custom arrow-link">View all integrations <span class="arrow">→</span></a>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="section-padding" style="background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);">
+        <div class="container-custom">
+            <div class="section-header text-center mx-auto scroll-fade" style="max-width: 800px; margin-bottom: 4rem;">
+                <h2>What our customers say</h2>
+                <p>Join thousands of teams tracking attendance with Time Doctor</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="testimonial-card scroll-fade">
+                        <div class="testimonial-text">
+                            "Time Doctor's attendance tracking cut our payroll processing time 
+                            in half. The automatic timesheets are incredibly accurate."
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">SJ</div>
+                            <div class="author-info">
+                                <h5>Sarah Johnson</h5>
+                                <p>HR Director, TechCorp</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="testimonial-card scroll-fade">
+                        <div class="testimonial-text">
+                            "Managing attendance for 500+ remote employees is now effortless. 
+                            The real-time dashboards give us complete visibility."
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">MP</div>
+                            <div class="author-info">
+                                <h5>Michael Peterson</h5>
+                                <p>COO, Global Services Inc</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-4 col-md-6">
+                    <div class="testimonial-card scroll-fade">
+                        <div class="testimonial-text">
+                            "The GPS tracking for our field teams was a game-changer. We can 
+                            verify attendance from job sites and improve accountability."
+                        </div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">LR</div>
+                            <div class="author-info">
+                                <h5>Lisa Rodriguez</h5>
+                                <p>Operations Manager, BuildRight</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="section-padding" style="background: white;">
+        <div class="container-custom">
+            <div class="section-header text-center mx-auto scroll-fade" style="max-width: 800px; margin-bottom: 4rem;">
+                <h2>Frequently asked questions</h2>
+            </div>
+
+            <div class="mx-auto" style="max-width: 900px;">
+                <div class="faq-item scroll-fade">
+                    <div class="faq-question">
+                        How does automatic attendance tracking work?
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Time Doctor automatically logs when employees start and stop working. 
+                        When they begin a task, they're clocked in. When they finish, they're 
+                        clocked out. No manual entries required.
+                    </div>
+                </div>
+
+                <div class="faq-item scroll-fade">
+                    <div class="faq-question">
+                        Can employees manually adjust their attendance?
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Yes, employees can submit edit requests for their time entries, which 
+                        managers can approve or deny. All changes are logged in an audit trail 
+                        for complete transparency.
+                    </div>
+                </div>
+
+                <div class="faq-item scroll-fade">
+                    <div class="faq-question">
+                        Does it work for different time zones?
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Absolutely. Time Doctor handles multiple time zones automatically, 
+                        showing each employee's local time and converting to your company's 
+                        preferred time zone for reporting.
+                    </div>
+                </div>
+
+                <div class="faq-item scroll-fade">
+                    <div class="faq-question">
+                        How do I export attendance data for payroll?
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        You can export attendance reports in CSV, Excel, or PDF formats. We 
+                        also offer direct integrations with major payroll systems like ADP, 
+                        Gusto, and QuickBooks.
+                    </div>
+                </div>
+
+                <div class="faq-item scroll-fade">
+                    <div class="faq-question">
+                        Is GPS tracking optional?
+                        <span>+</span>
+                    </div>
+                    <div class="faq-answer">
+                        Yes, GPS tracking is completely optional and only used if you enable 
+                        it. It's useful for field teams but not required for standard office 
+                        or remote workers.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container-custom">
+            <div class="cta-content scroll-fade">
+                <h2>Start tracking attendance today</h2>
+                <p>Join 280,000+ users who trust DeskTime for attendance management</p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="#" class="btn-custom btn-white arrow-link">Start free trial <span class="arrow">→</span></a>
+                    <a href="#" class="btn-custom btn-outline-white">Schedule a Demo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container-custom">
+            <div class="row g-5">
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Products</h4>
+                    <ul class="footer-links">
+                      <li><a href="../products/features.html">Features</a></li>
+                        <li><a href="../products/Pricingg.html">Pricing</a></li>
+                        <li><a href="#">Integrations</a></li>
+                        <li><a href="#">Get started</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Use Case</h4>
+                    <ul class="footer-links">
+                         <li><a href="../Use Case/product-analytics.html">Productivity Analytics</a></li>
+                        <li><a href="../Use Case/Workforce-Analytics.html">Workforce Analytics</a></li>
+                        <li><a href="../Use Case/Distributed-workforce.html">Distributed Workforce</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Features</h4>
+                    <ul class="footer-links">
+                       <li><a href="#">Benchmarks AI</a></li>
+                        <li><a href="../Features/employee-monitoring.html">Employee Monitoring</a></li>
+                        <li><a href="../Features/time-tracking.html">Time Tracking</a></li>
+                        <li><a href="../Features/payroll.html">Payroll</a></li>
+                        <li><a href="../Features/TimeManagement.html">Time Management</a></li>
+                        <li><a href="../Features/Screen_Monitoring.html">Screen Monitoring</a></li>
+                        <li><a href="../Features/attendance.html">Attendance</a></li>
+                        <li><a href="../Features/Unusual_Activity_Report.html">Unusual Activity Report</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Workforce Type</h4>
+                    <ul class="footer-links">
+                       <li><a href="../Workforce Type/remote.html">Remote</a></li>
+                        <li><a href="../Workforce Type/hybrid.html">Hybrid</a></li>
+                        <li><a href="../Workforce Type/in-office.html">In-Office</a></li>
+                        <li><a href="../Workforce Type/enterprise.html">Enterprise</a></li>
+                        <li><a href="../Workforce Type/sme-smb.html">SME &amp; SMB</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                          <li><a href="../Company/aboutus.html">About us</a></li>
+                        <li><a href="../Company/careers.html">Careers</a></li>
+                        <li><a href="../Company/TermsofService.html">Terms Of Service</a></li>
+                        <li><a href="../Company/privancypolicy.html">Privacy Policy</a></li>
+                    </ul>
+                    <div class="footer-social">
+                        <a href="https://linkedin.com" target="_blank" class="social-icon" aria-label="LinkedIn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+                                <circle cx="4" cy="4" r="2"/>
+                            </svg>
+                        </a>
+                        <a href="https://facebook.com" target="_blank" class="social-icon" aria-label="Facebook">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+                            </svg>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" class="social-icon" aria-label="Instagram">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="none" stroke="currentColor" stroke-width="2"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" class="social-icon" aria-label="Twitter">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+                            </svg>
+                        </a>
+                        <a href="https://youtube.com" target="_blank" class="social-icon" aria-label="YouTube">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23 9.7s-.23-1.62-.92-2.33c-.88-.92-1.86-.93-2.31-.98C16.57 6.14 12 6.14 12 6.14s-4.57 0-7.77.25c-.45.05-1.43.06-2.31.98C1.23 8.08 1 9.7 1 9.7S.77 11.55.77 13.4v1.73c0 1.85.23 3.7.23 3.7s.23 1.62.92 2.33c.88.92 2.04.89 2.56.99 1.85.18 7.52.23 7.52.23s4.58-.01 7.77-.26c.45-.05 1.43-.06 2.31-.98.69-.71.92-2.33.92-2.33s.23-1.85.23-3.7v-1.73c0-1.85-.23-3.7-.23-3.7zM9.54 15.57V9.43l6 3.07-6 3.07z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2026 DeskTime. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Navbar scroll effect
+        const navbar = document.querySelector('.navbar-custom');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Footer accordion for mobile
+        const footerColumns = document.querySelectorAll('.footer-column');
+        
+        footerColumns.forEach(column => {
+            const heading = column.querySelector('h4');
+            
+            heading.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    column.classList.toggle('active');
+                }
+            });
+        });
+
+        // Scroll animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry, index) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => {
+                        entry.target.classList.add('visible');
+                    }, index * 100);
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.scroll-fade').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    const offsetTop = target.offsetTop - 80;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

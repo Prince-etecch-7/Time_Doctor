@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeskTime - My Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root{--primary:#00d4aa;--primary-dark:#00b892;--accent-purple:#8b5cf6;--accent-blue:#3b82f6}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Outfit',sans-serif;min-height:100vh;background:#0d0f1a;color:#fff;overflow-x:hidden}
+
+        #loadingScreen{position:fixed;inset:0;z-index:99999;background:#0d0f1a;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2rem;transition:opacity .6s ease,visibility .6s ease}
+        #loadingScreen.hide{opacity:0;visibility:hidden;pointer-events:none}
+        .ld-orb1{position:absolute;width:600px;height:600px;background:radial-gradient(circle,rgba(0,212,170,.12) 0%,transparent 70%);border-radius:50%;top:-200px;left:-150px;animation:o1 8s ease-in-out infinite;pointer-events:none}
+        .ld-orb2{position:absolute;width:500px;height:500px;background:radial-gradient(circle,rgba(139,92,246,.12) 0%,transparent 70%);border-radius:50%;bottom:-150px;right:-100px;animation:o2 10s ease-in-out infinite;pointer-events:none}
+        @keyframes o1{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,-40px)}}
+        @keyframes o2{0%,100%{transform:translate(0,0)}50%{transform:translate(-50px,40px)}}
+        .ld-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(0,212,170,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,170,.03) 1px,transparent 1px);background-size:60px 60px;pointer-events:none}
+        .ld-logo{font-family:'Playfair Display',serif;font-size:clamp(3rem,10vw,5rem);font-weight:900;background:linear-gradient(135deg,var(--primary) 0%,#fff 50%,var(--accent-purple) 100%);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;animation:shimmer 2s ease-in-out infinite;letter-spacing:-2px;position:relative;z-index:1}
+        .ld-tag{font-size:.95rem;color:rgba(255,255,255,.35);letter-spacing:3px;text-transform:uppercase;font-weight:500;position:relative;z-index:1}
+        .ld-bar{width:clamp(200px,30vw,320px);height:3px;background:rgba(255,255,255,.07);border-radius:99px;overflow:hidden;position:relative;z-index:1}
+        .ld-fill{height:100%;background:linear-gradient(90deg,var(--primary),var(--accent-purple),var(--accent-blue));animation:barfill 2.4s cubic-bezier(.4,0,.2,1) forwards}
+
+        @keyframes shimmer{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+        @keyframes barfill{0%{width:0%}60%{width:75%}85%{width:90%}100%{width:100%}}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(0,212,170,.7)}70%{box-shadow:0 0 0 8px rgba(0,212,170,0)}100%{box-shadow:0 0 0 0 rgba(0,212,170,0)}}
+
+        .mesh-bg{position:fixed;inset:0;z-index:0;background:radial-gradient(ellipse 80% 60% at 20% 20%,rgba(0,212,170,.1) 0%,transparent 60%),radial-gradient(ellipse 60% 80% at 80% 80%,rgba(139,92,246,.1) 0%,transparent 60%),#0d0f1a}
+        .grid-bg{position:fixed;inset:0;z-index:0;background-image:linear-gradient(rgba(0,212,170,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,170,.03) 1px,transparent 1px);background-size:60px 60px}
+
+        .dash-nav{position:relative;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(255,255,255,.03);border-bottom:1px solid rgba(255,255,255,.06);backdrop-filter:blur(20px)}
+        .nav-logo{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:900;background:linear-gradient(135deg,var(--primary) 0%,#fff 50%,var(--accent-purple) 100%);background-size:200% 200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-decoration:none;letter-spacing:-1px;animation:shimmer 4s ease-in-out infinite}
+        .nav-r{display:flex;align-items:center;gap:1rem}
+        .nav-av{width:42px;height:42px;border-radius:12px;background:linear-gradient(135deg,rgba(0,212,170,.2),rgba(139,92,246,.2));border:1px solid rgba(0,212,170,.3);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:1.1rem;color:var(--primary)}
+        .nav-un{font-weight:600;color:rgba(255,255,255,.7);font-size:.9rem}
+        .btn-lo{background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.25);color:#ff4757;padding:7px 18px;border-radius:10px;font-size:.85rem;font-weight:600;cursor:pointer;transition:.3s;font-family:'Outfit',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem}
+        .btn-lo:hover{background:rgba(255,71,87,.2);color:#ff4757;transform:translateY(-1px)}
+
+        .dash-content{position:relative;z-index:10;max-width:1200px;margin:0 auto;padding:2.5rem 2rem}
+
+        .card-glass{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:1.8rem}
+        .card-glass h5{font-family:'Playfair Display',serif;font-weight:700;color:#fff;margin-bottom:1.2rem;font-size:1.1rem}
+
+        .dl-banner{background:linear-gradient(135deg,rgba(0,212,170,.08),rgba(139,92,246,.08));border:1px solid rgba(0,212,170,.2);border-radius:20px;padding:2rem 2.5rem;display:flex;align-items:center;justify-content:space-between;margin-bottom:2rem;gap:1.5rem;flex-wrap:wrap;position:relative;overflow:hidden}
+        .dl-banner::before{content:'';position:absolute;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--primary),var(--accent-purple),var(--accent-blue),var(--primary));background-size:200% 100%;animation:barslide 3s linear infinite}
+        @keyframes barslide{0%{background-position:0% 0%}100%{background-position:200% 0%}}
+        .dl-text h3{font-size:1.25rem;font-weight:700;color:#fff;margin-bottom:.3rem}
+        .dl-text p{color:rgba(255,255,255,.45);font-size:.9rem;margin:0}
+        .btn-dl{background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);color:#0d0f1a;border:none;border-radius:12px;padding:12px 28px;font-weight:700;font-size:.95rem;cursor:pointer;transition:.3s;white-space:nowrap;font-family:'Outfit',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:.5rem;box-shadow:0 4px 20px rgba(0,212,170,.3)}
+        .btn-dl:hover{transform:translateY(-2px);box-shadow:0 8px 28px rgba(0,212,170,.45);color:#0d0f1a}
+
+        .stat-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:1.5rem 1.8rem;display:flex;align-items:center;gap:1.2rem;transition:.3s}
+        .stat-card:hover{border-color:rgba(0,212,170,.25);transform:translateY(-3px);box-shadow:0 12px 32px rgba(0,0,0,.3)}
+        .stat-icon{width:54px;height:54px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0}
+        .ic-t{background:rgba(0,212,170,.12);color:var(--primary)}
+        .ic-p{background:rgba(59,130,246,.12);color:var(--accent-blue)}
+        .ic-i{background:rgba(255,107,107,.12);color:#ff6b6b}
+        .stat-label{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);margin-bottom:5px}
+        .stat-value{font-size:1.9rem;font-weight:800;color:#fff;line-height:1}
+
+        .chart-wrapper{position:relative;height:260px}
+
+        .tbl{width:100%;border-collapse:collapse}
+        .tbl thead th{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.3);padding:.6rem 1rem;border-bottom:1px solid rgba(255,255,255,.06)}
+        .tbl tbody tr{border-bottom:1px solid rgba(255,255,255,.04);transition:.2s}
+        .tbl tbody tr:hover{background:rgba(255,255,255,.03)}
+        .tbl tbody td{padding:.9rem 1rem;font-size:.9rem;color:rgba(255,255,255,.65)}
+        .b-act{background:rgba(0,212,170,.12);color:var(--primary);border:1px solid rgba(0,212,170,.2);padding:3px 12px;border-radius:20px;font-size:.75rem;font-weight:700}
+        .b-idl{background:rgba(255,107,107,.12);color:#ff6b6b;border:1px solid rgba(255,107,107,.2);padding:3px 12px;border-radius:20px;font-size:.75rem;font-weight:700}
+
+        .step{display:flex;align-items:flex-start;gap:1rem;margin-bottom:1.3rem}
+        .step:last-child{margin-bottom:0}
+        .step-n{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:linear-gradient(135deg,var(--primary),var(--accent-purple));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.85rem;color:#fff;box-shadow:0 4px 12px rgba(0,212,170,.3)}
+        .step-t strong{display:block;color:rgba(255,255,255,.9);font-size:.9rem;margin-bottom:3px}
+        .step-t span{color:rgba(255,255,255,.4);font-size:.82rem;line-height:1.5}
+
+        .live-dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--primary);margin-right:6px;animation:pulse 2s infinite}
+        .no-data{text-align:center;padding:2rem;color:rgba(255,255,255,.25)}
+        .no-data i{font-size:2.2rem;margin-bottom:.8rem;display:block}
+
+        .form-input-dark{width:100%;padding:.85rem 1.1rem;background:rgba(255,255,255,.05);border:1.5px solid rgba(255,255,255,.1);border-radius:12px;color:#fff;font-family:'Outfit',sans-serif;font-size:.95rem;outline:none;transition:.3s}
+        .form-input-dark:focus{border-color:var(--primary);background:rgba(0,212,170,.06);box-shadow:0 0 0 3px rgba(0,212,170,.1)}
+        .form-input-dark::placeholder{color:rgba(255,255,255,.25)}
+        .form-label-dark{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);margin-bottom:6px;display:block}
+
+        .btn-create{width:100%;padding:.85rem;background:linear-gradient(135deg,var(--primary),var(--primary-dark));color:#0d0f1a;border:none;border-radius:12px;font-weight:700;font-size:.95rem;font-family:'Outfit',sans-serif;cursor:pointer;transition:.3s;display:flex;align-items:center;justify-content:center;gap:.5rem}
+        .btn-create:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,212,170,.4)}
+        .btn-create:disabled{opacity:.6;transform:none;cursor:not-allowed}
+        .btn-spinner{width:18px;height:18px;border:2px solid rgba(0,0,0,.3);border-top-color:#0d0f1a;border-radius:50%;animation:spin .7s linear infinite;display:inline-block}
+
+        @media(max-width:768px){.dash-nav{padding:1rem 1.2rem}.dash-content{padding:1.5rem 1rem}.dl-banner{flex-direction:column}.nav-un{display:none}.stat-value{font-size:1.5rem}}
+    </style>
+</head>
+<body>
+
+<div id="loadingScreen">
+    <div class="ld-grid"></div>
+    <div class="ld-orb1"></div>
+    <div class="ld-orb2"></div>
+    <div class="ld-logo">DeskTime</div>
+    <p class="ld-tag">Workforce Analytics</p>
+    <div class="ld-bar"><div class="ld-fill"></div></div>
+</div>
+
+<div class="mesh-bg"></div>
+<div class="grid-bg"></div>
+
+<nav class="dash-nav">
+    <a href="Home.html" class="nav-logo">DeskTime</a>
+    <div class="nav-r">
+        <div class="nav-av" id="navAv">?</div>
+        <span class="nav-un" id="navUn">...</span>
+        <a href="#" class="btn-lo" onclick="logout();return false;"><i class="bi bi-box-arrow-right"></i> Logout</a>
+    </div>
+</nav>
+
+<div class="dash-content">
+
+    <!-- Header -->
+    <div class="mb-4">
+        <p style="color:rgba(255,255,255,.35);font-size:.82rem;margin-bottom:6px;">
+            <span class="live-dot"></span><span id="todayDate"></span>
+        </p>
+        <h1 style="font-family:'Playfair Display',serif;font-size:clamp(1.8rem,4vw,2.5rem);font-weight:900;line-height:1.2;">
+            Welcome back, <span id="welcomeName" style="background:linear-gradient(135deg,var(--primary),var(--accent-purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">...</span>
+        </h1>
+        <p style="color:rgba(255,255,255,.35);margin-top:6px;font-size:.9rem;">Your personal productivity overview for today.</p>
+    </div>
+
+    <!-- Tracker ID Setup Card -->
+    <div class="mb-4" id="trackerSetupArea">
+        <!-- Shows when no tracker ID yet -->
+        <div class="card-glass" id="trackerFormCard">
+            <h5>🔑 Step 1 — Create Your Tracker Login</h5>
+            <p style="color:rgba(255,255,255,.4);font-size:.9rem;margin-bottom:1.5rem;">
+                Create a short Tracker ID and password. You will use these to log into the tracker app on your computer.
+            </p>
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label class="form-label-dark">Tracker ID</label>
+                    <input type="text" id="trackerIdInput" class="form-input-dark" placeholder="e.g. john_doe or ABC">
+                    <p style="font-size:.75rem;color:rgba(255,255,255,.3);margin-top:5px;">Min 3 characters — this is your identity in the tracker</p>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label-dark">Tracker Password</label>
+                    <input type="password" id="trackerPassInput" class="form-input-dark" placeholder="Create a password">
+                    <p style="font-size:.75rem;color:rgba(255,255,255,.3);margin-top:5px;">Min 4 characters</p>
+                </div>
+                <div class="col-md-4 d-flex align-items-end pb-4">
+                    <button class="btn-create" id="createTrackerBtn" onclick="createTrackerID()">
+                        <i class="bi bi-person-badge-fill"></i> Create Tracker ID
+                    </button>
+                </div>
+            </div>
+            <div id="trackerMsg" style="display:none;margin-top:1rem;padding:.75rem 1rem;border-radius:10px;font-size:.9rem;font-weight:600;"></div>
+        </div>
+
+        <!-- Shows after tracker ID is created -->
+        <div class="dl-banner" id="trackerReadyCard" style="display:none;">
+            <div class="dl-text">
+                <h3><i class="bi bi-check-circle-fill me-2" style="color:var(--primary)"></i>Tracker ID Ready!</h3>
+                <p>Your Tracker ID: <strong id="displayTrackerID" style="color:var(--primary);font-size:1.1rem;"></strong>
+                — Use this ID and your tracker password to log in to the tracker app.</p>
+            </div>
+            <a href="#" class="btn-dl"><i class="bi bi-windows"></i> Download Tracker</a>
+        </div>
+    </div>
+
+    <!-- Stats -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon ic-t"><i class="bi bi-clock-history"></i></div>
+                <div><p class="stat-label">Tracked Today</p><p class="stat-value" id="sTotal">--</p></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon ic-p"><i class="bi bi-lightning-charge-fill"></i></div>
+                <div><p class="stat-label">Efficiency Score</p><p class="stat-value" id="sEff" style="color:var(--primary)">--%</p></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="stat-icon ic-i"><i class="bi bi-cup-hot-fill"></i></div>
+                <div><p class="stat-label">Idle Time</p><p class="stat-value" id="sIdle" style="color:#ff6b6b">--</p></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-8">
+            <div class="card-glass h-100">
+                <h5>Hourly Activity Timeline</h5>
+                <div class="chart-wrapper"><canvas id="timelineChart"></canvas></div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card-glass h-100 text-center">
+                <h5>My Productivity</h5>
+                <div class="chart-wrapper"><canvas id="productivityChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Activity + Steps -->
+    <div class="row g-4">
+        <div class="col-lg-7">
+            <div class="card-glass">
+                <h5>Recent Activity</h5>
+                <div style="overflow-x:auto">
+                    <table class="tbl">
+                        <thead><tr><th>Time</th><th>Status</th><th>Application</th></tr></thead>
+                        <tbody id="actBody">
+                            <tr><td colspan="3" class="no-data"><i class="bi bi-hourglass-split"></i>Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5">
+            <div class="card-glass">
+                <h5>How to Get Started</h5>
+                <div class="step"><div class="step-n">1</div><div class="step-t"><strong>Create Tracker ID above</strong><span>Set your short ID and password for the tracker app</span></div></div>
+                <div class="step"><div class="step-n">2</div><div class="step-t"><strong>Download the Tracker</strong><span>Click "Download Tracker" button that appears after creating ID</span></div></div>
+                <div class="step"><div class="step-n">3</div><div class="step-t"><strong>Login to tracker</strong><span>Use your Tracker ID and tracker password to log in</span></div></div>
+                <div class="step"><div class="step-n">4</div><div class="step-t"><strong>Click Start Tracking</strong><span>Your activity will appear here and in the admin panel</span></div></div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const SERVER = 'http://127.0.0.1:5000';
+    const userId = localStorage.getItem('dt_user_id');
+    if (!userId) { window.location.href = 'login.html'; }
+
+    document.getElementById('navAv').textContent      = userId ? userId[0].toUpperCase() : '?';
+    document.getElementById('navUn').textContent      = userId || '';
+    document.getElementById('welcomeName').textContent = userId || '';
+    document.getElementById('todayDate').textContent  = new Date().toLocaleDateString('en-US', {weekday:'long', day:'numeric', month:'long', year:'numeric'});
+
+    window.addEventListener('load', function() {
+        setTimeout(function() { document.getElementById('loadingScreen').classList.add('hide'); }, 2400);
+        checkTrackerStatus();
+        loadStats();
+        setInterval(loadStats, 15000);
+    });
+
+    function logout() {
+        localStorage.removeItem('dt_user_id');
+        localStorage.removeItem('dt_role');
+        window.location.href = 'login.html';
+    }
+
+    // ===== TRACKER ID =====
+    function checkTrackerStatus() {
+        fetch(SERVER + '/api/get_tracker_status?web_username=' + encodeURIComponent(userId))
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            if (data.has_tracker) {
+                showTrackerReady(data.tracker_id);
+            }
+        })
+        .catch(function() {});
+    }
+
+    function showTrackerReady(trackerId) {
+        document.getElementById('trackerFormCard').style.display = 'none';
+        document.getElementById('trackerReadyCard').style.display = 'flex';
+        document.getElementById('displayTrackerID').textContent = trackerId;
+    }
+
+    function createTrackerID() {
+        var trackerId   = document.getElementById('trackerIdInput').value.trim();
+        var trackerPass = document.getElementById('trackerPassInput').value.trim();
+        var btn = document.getElementById('createTrackerBtn');
+        var msg = document.getElementById('trackerMsg');
+
+        if (!trackerId || trackerId.length < 3) {
+            showMsg('Tracker ID must be at least 3 characters.', 'error'); return;
+        }
+        if (!trackerPass || trackerPass.length < 4) {
+            showMsg('Tracker password must be at least 4 characters.', 'error'); return;
+        }
+
+        btn.disabled = true;
+        btn.innerHTML = '<span class="btn-spinner"></span> Creating...';
+
+        fetch(SERVER + '/api/create_tracker_id', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ web_username: userId, tracker_id: trackerId, tracker_password: trackerPass })
+        })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-person-badge-fill"></i> Create Tracker ID';
+            if (data.success) {
+                showTrackerReady(trackerId);
+            } else {
+                showMsg(data.message || 'Failed. Try again.', 'error');
+            }
+        })
+        .catch(function() {
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-person-badge-fill"></i> Create Tracker ID';
+            showMsg('Cannot connect to server. Make sure server is running.', 'error');
+        });
+    }
+
+    function showMsg(text, type) {
+        var el = document.getElementById('trackerMsg');
+        el.style.display = 'block';
+        el.style.background = type === 'error' ? 'rgba(255,71,87,.12)' : 'rgba(0,212,170,.12)';
+        el.style.border = type === 'error' ? '1px solid rgba(255,71,87,.3)' : '1px solid rgba(0,212,170,.3)';
+        el.style.color = type === 'error' ? '#ff4757' : 'var(--primary)';
+        el.innerHTML = (type === 'error' ? '&#9888; ' : '&#10003; ') + text;
+    }
+
+    // ===== CHARTS =====
+    var tlChart, pdChart;
+
+    function initCharts(d) {
+        var labels = d.chart_labels || ['No Data'];
+        var pa = d.chart_prod || [0];
+        var ua = d.chart_unprod || [0];
+        var na = d.chart_neutral || [0];
+        var pd = [d.prod_count||0, d.unprod_count||0, d.neutral_count||0];
+        var tot = pd[0] + pd[1] + pd[2];
+
+        if (tlChart) tlChart.destroy();
+        if (pdChart) pdChart.destroy();
+
+        tlChart = new Chart(document.getElementById('timelineChart').getContext('2d'), {
+            type: 'bar',
+            data: { labels: labels, datasets: [
+                { label: 'Productive (min)',   data: pa, backgroundColor: 'rgba(0,212,170,.75)',  borderRadius: 4 },
+                { label: 'Unproductive (min)', data: ua, backgroundColor: 'rgba(255,107,107,.75)', borderRadius: 4 },
+                { label: 'Neutral (min)',       data: na, backgroundColor: 'rgba(255,255,255,.1)',  borderRadius: 4 }
+            ]},
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    x: { stacked: true, ticks: { color: 'rgba(255,255,255,.35)', font: { family: 'Outfit' } }, grid: { color: 'rgba(255,255,255,.04)' } },
+                    y: { stacked: true, beginAtZero: true, ticks: { color: 'rgba(255,255,255,.35)', font: { family: 'Outfit' } }, grid: { color: 'rgba(255,255,255,.04)' } }
+                },
+                plugins: { legend: { position: 'bottom', labels: { color: 'rgba(255,255,255,.45)', usePointStyle: true, font: { family: 'Outfit' }, padding: 16 } } }
+            }
+        });
+
+        pdChart = new Chart(document.getElementById('productivityChart').getContext('2d'), {
+            type: 'doughnut',
+            data: { labels: ['Productive','Unproductive','Neutral'],
+                datasets: [{ data: tot > 0 ? pd : [0,0,1], backgroundColor: ['#00d4aa','#ff6b6b','rgba(255,255,255,.1)'], borderWidth: 0, hoverOffset: 8 }]
+            },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '75%',
+                plugins: { legend: { position: 'bottom', labels: { color: 'rgba(255,255,255,.45)', usePointStyle: true, padding: 16, font: { family: 'Outfit' } } } }
+            }
+        });
+    }
+
+    function loadStats() {
+        if (!userId) return;
+        var trackerId = localStorage.getItem('dt_tracker_id') || userId;
+        fetch(SERVER + '/api/dashboard_stats?user_id=' + encodeURIComponent(trackerId) + '&t=' + Date.now())
+        .then(function(r) { return r.json(); })
+        .then(function(d) {
+            document.getElementById('sTotal').textContent = d.total_time  || '0h 0m';
+            document.getElementById('sEff').textContent   = (d.active_pct || 0) + '%';
+            document.getElementById('sIdle').textContent  = d.idle_time   || '0h 0m';
+            initCharts(d);
+
+            var tbody = document.getElementById('actBody');
+            if (d.recent_logs && d.recent_logs.length > 0) {
+                tbody.innerHTML = d.recent_logs.map(function(l) {
+                    return '<tr><td style="color:rgba(255,255,255,.4);font-weight:600"><i class="bi bi-clock me-1"></i>' + l.time + '</td><td><span class="' + (l.status.toLowerCase() === 'active' ? 'b-act' : 'b-idl') + '">' + l.status.toUpperCase() + '</span></td><td style="font-weight:600;color:rgba(255,255,255,.8)">' + l.app_name + '</td></tr>';
+                }).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="3" class="no-data"><i class="bi bi-activity"></i>No activity yet today.<br><small>Start the tracker to see data here.</small></td></tr>';
+            }
+        })
+        .catch(function() { document.getElementById('sTotal').textContent = 'Offline'; });
+    }
+</script>
+</body>
+</html>

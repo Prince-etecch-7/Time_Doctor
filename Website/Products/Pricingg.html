@@ -1,0 +1,1340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - DeskTime</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00d4aa;
+            --primary-dark: #00b892;
+            --dark: #1a1d29;
+            --dark-light: #2a2d3a;
+            --text: #1a1d29;
+            --text-light: #6b7280;
+            --bg: #ffffff;
+            --bg-light: #f8fafc;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-blue: #3b82f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background: var(--bg);
+        }
+
+        .container-custom {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ============================================
+           NAVBAR — exact remembered style
+        ============================================ */
+
+        .navbar-custom {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .navbar-custom.scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 0.6s ease forwards;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--text);
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.25rem;
+        }
+
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 100%;
+            background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(139,92,246,0.1));
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transition: width 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .navbar-nav .nav-link:hover::before { width: 120%; }
+        .navbar-nav .nav-link:hover::after  { width: 100%; }
+
+        /* ── BUTTONS ── */
+        .btn-custom {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn-custom:hover::before { width: 300px; height: 300px; }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(0, 212, 170, 0.5);
+            color: white;
+        }
+
+        .btn-outline-custom {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--text);
+        }
+
+        .btn-outline-custom:hover {
+            background: var(--text);
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-white-custom {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.12);
+        }
+
+        .btn-white-custom:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(255,255,255,0.35);
+            color: var(--primary);
+        }
+
+        .btn-outline-white-custom {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline-white-custom:hover {
+            background: white;
+            color: var(--dark);
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .arrow { display: inline-block; transition: transform 0.3s ease; }
+        .arrow-link:hover .arrow { transform: translateX(5px); }
+
+        /* ============================================
+           HERO SECTION
+        ============================================ */
+
+        .hero-section {
+            padding-top: 160px;
+            padding-bottom: 6rem;
+            text-align: center;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #f5f3ff 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 800px; height: 800px;
+            background: radial-gradient(circle, rgba(0,212,170,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -400px; right: -200px;
+            animation: floatOrb 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(139,92,246,0.08) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -200px; left: -100px;
+            animation: floatOrb 28s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0,0) rotate(0deg); }
+            33%       { transform: translate(30px,-30px) rotate(120deg); }
+            66%       { transform: translate(-20px,20px) rotate(240deg); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-section > .container-custom > .row > div > p {
+            font-size: 1.3rem;
+            color: var(--text-light);
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .trial-note {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: white;
+            border-radius: 50px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            font-weight: 600;
+            color: var(--text);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .trial-note:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        }
+
+        /* ============================================
+           SECTION HELPERS
+        ============================================ */
+
+        .section-padding { padding: 8rem 0; }
+
+        .section-tag {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(139,92,246,0.1));
+            color: var(--primary);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            transition: transform 0.3s ease;
+        }
+
+        .section-tag:hover { transform: translateY(-2px); }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            max-width: 720px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* ============================================
+           PRICING CARDS
+        ============================================ */
+
+        .pricing-card {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem 2.5rem;
+            border: 2px solid rgba(0,0,0,0.06);
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+            overflow: hidden;
+        }
+
+        .pricing-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-14px);
+            box-shadow: 0 28px 60px rgba(0,212,170,0.18);
+            border-color: var(--primary);
+        }
+
+        .pricing-card:hover::before { transform: scaleX(1); }
+
+        .pricing-card.popular {
+            border-color: var(--primary);
+            box-shadow: 0 14px 50px rgba(0,212,170,0.18);
+        }
+
+        .pricing-card.popular::before { transform: scaleX(1); }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px; right: 2rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            color: white;
+            padding: 0.4rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-header-custom h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            margin-bottom: 0.8rem;
+            color: var(--dark);
+        }
+
+        .card-header-custom p {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+
+        .price { margin-bottom: 1.5rem; }
+
+        .price-amount {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: var(--dark);
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .price-period {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-top: 0.25rem;
+        }
+
+        .price-billing {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-top: 0.5rem;
+        }
+
+        .features-list {
+            list-style: none;
+            margin: 2rem 0;
+            flex-grow: 1;
+            padding-left: 0;
+        }
+
+        .features-list li {
+            padding: 0.65rem 0;
+            color: var(--text);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+            border-bottom: 1px solid rgba(0,0,0,0.04);
+            font-size: 0.96rem;
+            transition: transform 0.2s ease;
+        }
+
+        .features-list li:last-child { border-bottom: none; }
+
+        .features-list li:hover { transform: translateX(4px); }
+
+        .features-list li::before {
+            content: '✓';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px; height: 22px;
+            min-width: 22px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.8rem;
+        }
+
+        /* ============================================
+           ADD-ONS SECTION
+        ============================================ */
+
+        .addon-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 2px solid rgba(0,0,0,0.05);
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+        }
+
+        .addon-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .addon-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 50px rgba(0,212,170,0.16);
+            border-color: var(--primary);
+        }
+
+        .addon-card:hover::before { transform: scaleX(1); }
+
+        .addon-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+
+        .addon-name h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0;
+        }
+
+        .addon-price { text-align: right; flex-shrink: 0; }
+
+        .addon-price-amount {
+            font-size: 2rem;
+            font-weight: 900;
+            font-family: 'Playfair Display', serif;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .addon-price-period {
+            font-size: 0.82rem;
+            color: var(--text-light);
+            margin-top: 0.2rem;
+        }
+
+        .addon-description {
+            color: var(--text-light);
+            line-height: 1.8;
+            font-size: 0.96rem;
+            margin: 0;
+        }
+
+        /* ============================================
+           TESTIMONIAL
+        ============================================ */
+
+        .testimonial-section {
+            padding: 7rem 0;
+            background: linear-gradient(135deg, var(--accent-purple) 0%, var(--primary) 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonial-section::before {
+            content: '';
+            position: absolute;
+            width: 100%; height: 100%;
+            top: 0; left: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .testimonial-metric {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-quote {
+            font-size: clamp(1.2rem, 2.5vw, 1.8rem);
+            font-style: italic;
+            margin-bottom: 1.5rem;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-author {
+            font-size: 1.1rem;
+            opacity: 0.95;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ============================================
+           FAQ SECTION
+        ============================================ */
+
+        .faq-item {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem 2.5rem;
+            border: 2px solid rgba(0,0,0,0.04);
+            transition: all 0.35s ease;
+            margin-bottom: 1.25rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .faq-item::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0;
+            width: 4px; height: 0;
+            background: linear-gradient(180deg, var(--primary), var(--accent-purple));
+            transition: height 0.4s ease;
+        }
+
+        .faq-item:hover {
+            border-color: rgba(0,212,170,0.3);
+            box-shadow: 0 12px 40px rgba(0,212,170,0.1);
+            transform: translateX(6px);
+        }
+
+        .faq-item:hover::before { height: 100%; }
+
+        .faq-question {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .faq-answer {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin: 0;
+        }
+
+        /* ============================================
+           CTA SECTION
+        ============================================ */
+
+        .cta-section {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 100%; height: 100%;
+            top: 0; left: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+            opacity: 0.4;
+        }
+
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            width: 700px; height: 700px;
+            background: rgba(255,255,255,0.07);
+            border-radius: 50%;
+            top: -400px; right: -200px;
+            pointer-events: none;
+        }
+
+        .cta-content { position: relative; z-index: 2; }
+
+        .cta-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            color: white;
+            margin-bottom: 1.25rem;
+        }
+
+        .cta-content p {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.92);
+            margin-bottom: 2.5rem;
+            line-height: 1.8;
+        }
+
+        /* ============================================
+           FOOTER — exact remembered style
+        ============================================ */
+
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        .footer-column h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .footer-links { list-style: none; padding: 0; margin: 0; }
+        .footer-links li { margin-bottom: 0.8rem; }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0;
+            width: 0; height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .footer-links a:hover { color: white; transform: translateX(5px); }
+        .footer-links a:hover::after { width: 100%; }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .footer-social { display: flex; gap: 1rem; margin-top: 2rem; }
+
+        .social-icon {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-decoration: none;
+            color: white;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* ============================================
+           SCROLL FADE
+        ============================================ */
+
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+
+        .scroll-fade.visible { opacity: 1; transform: translateY(0); }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+
+        @media (max-width: 991px) {
+            .section-padding { padding: 5rem 0; }
+            .cta-section      { padding: 5rem 0; }
+            .testimonial-section { padding: 4rem 0; }
+        }
+
+        @media (max-width: 768px) {
+            .container-custom { padding: 0 1.25rem; }
+
+            .hero-section {
+                padding-top: 110px;
+                padding-bottom: 4rem;
+            }
+
+            .footer-column {
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                padding: 1rem 0;
+            }
+
+            .footer-column h4 {
+                cursor: pointer;
+                padding: 0.5rem 0;
+                margin-bottom: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                user-select: none;
+            }
+
+            .footer-column h4::after {
+                content: '+';
+                font-size: 1.5rem;
+                font-weight: 300;
+                color: var(--primary);
+            }
+
+            .footer-column.active h4::after { content: '−'; }
+
+            .footer-links {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            }
+
+            .footer-column.active .footer-links {
+                max-height: 600px;
+                opacity: 1;
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+
+            .footer-social {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            }
+
+            .footer-column.active .footer-social {
+                max-height: 200px;
+                opacity: 1;
+                padding-top: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ══════════════ NAVBAR ══════════════ -->
+    <nav class="navbar navbar-expand-lg navbar-custom" id="mainNav">
+        <div class="container-fluid nav-container">
+            <a href="../Home.html" class="logo">DeskTime</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+                aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav mx-auto gap-lg-1">
+                    <li class="nav-item"><a class="nav-link" href="../Products/features.html">Features</a></li>
+                  <li class="nav-item"><a class="nav-link" href="../Home.html#solutions">Solutions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Products/Pricingg.html">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Company/aboutus.html">About</a></li>
+                </ul>
+                <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0">
+                    <a href="../login.html" class="btn-custom btn-outline-custom">Login</a>
+                    <a href="#" class="btn-custom btn-primary-custom arrow-link">Start Free Trial <span class="arrow">→</span></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ══════════════ HERO ══════════════ -->
+    <section class="hero-section">
+        <div class="container-custom" style="position:relative;z-index:2">
+            <div class="row justify-content-center">
+                <div class="col-lg-9 text-center scroll-fade">
+                    <h1><span class="highlight">Flexible Pricing</span><br>Plans That Grow With You</h1>
+                    <p style="font-size:1.3rem;color:var(--text-light);margin-bottom:2.5rem;line-height:1.8;max-width:680px;margin-left:auto;margin-right:auto">
+                        Give yourself a clear picture of productivity & profits. Replace guesswork with precise monitoring. Measure and improve performance to drive business growth.
+                    </p>
+                    <a href="#trial" class="btn-custom btn-primary-custom arrow-link mb-4" style="font-size:1.1rem;padding:1rem 2.5rem">
+                        Start 14-Day Trial <span class="arrow">→</span>
+                    </a>
+                    <p class="mt-2">
+                        <span class="trial-note">Try <strong>every</strong> feature. No credit card required.</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ PRICING CARDS ══════════════ -->
+    <section class="section-padding" id="pricing" style="background:var(--bg)">
+        <div class="container-custom">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-tag">Plans</span>
+                <h2 class="section-title">Choose the Right Plan</h2>
+                <p class="section-subtitle">All plans start with a 14-day free trial — full access, no credit card needed.</p>
+            </div>
+            <div class="row g-4">
+
+                <!-- Basic -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="pricing-card scroll-fade">
+                        <div class="card-header-custom">
+                            <h3>Basic</h3>
+                            <p>Gain instant visibility into your remote or hybrid workforce</p>
+                        </div>
+                        <div class="price">
+                            <div class="price-amount">$7</div>
+                            <div class="price-period">per user / month</div>
+                            <div class="price-billing">billed annually or $9 month-to-month</div>
+                        </div>
+                        <ul class="features-list">
+                            <li>Automatic tracking</li>
+                            <li>Projects & Tasks</li>
+                            <li>Timeline Report</li>
+                            <li>Screenshots</li>
+                            <li>Online / Offline Tracking</li>
+                            <li>Knowledge Base</li>
+                        </ul>
+                        <div class="mt-auto pt-3">
+                            <a href="#trial" class="btn-custom btn-primary-custom w-100">Start 14-Day Trial</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Standard (Popular) -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="pricing-card popular scroll-fade">
+                        <span class="popular-badge">Popular</span>
+                        <div class="card-header-custom">
+                            <h3>Standard</h3>
+                            <p>Gauge your teams' productivity with granular reports</p>
+                        </div>
+                        <div class="price">
+                            <div class="price-amount">$14</div>
+                            <div class="price-period">per user / month</div>
+                            <div class="price-billing">billed annually or $17 month-to-month</div>
+                        </div>
+                        <ul class="features-list">
+                            <li>Everything in Basic, plus:</li>
+                            <li>Schedules & Attendance</li>
+                            <li>Time approvals</li>
+                            <li>Activity Summary</li>
+                            <li>Web & App Usage reporting</li>
+                            <li>Productivity Ratings</li>
+                            <li>Work-life balance metrics</li>
+                            <li>Real-time notifications</li>
+                            <li>60+ integrations</li>
+                            <li>Groups / Teams</li>
+                        </ul>
+                        <div class="mt-auto pt-3">
+                            <a href="#trial" class="btn-custom btn-primary-custom w-100">Start 14-Day Trial</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Premium -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="pricing-card scroll-fade">
+                        <div class="card-header-custom">
+                            <h3>Premium</h3>
+                            <p>Get the complete picture of your performance & profit gaps</p>
+                        </div>
+                        <div class="price">
+                            <div class="price-amount">$20</div>
+                            <div class="price-period">per user / month</div>
+                            <div class="price-billing">billed annually or $25 month-to-month</div>
+                        </div>
+                        <ul class="features-list">
+                            <li>Everything in Standard, plus:</li>
+                            <li>Benchmarks AI</li>
+                            <li>Office vs Remote Report</li>
+                            <li>Unusual Activity AI Report</li>
+                            <li>Video screen recording</li>
+                            <li>Dedicated Success Manager</li>
+                            <li>Executive Dashboard</li>
+                            <li>Open API access</li>
+                            <li>Single Sign On (SSO)</li>
+                            <li>Meeting Insights</li>
+                            <li>Software cost insights</li>
+                        </ul>
+                        <div class="mt-auto pt-3">
+                            <a href="#trial" class="btn-custom btn-primary-custom w-100">Start 14-Day Trial</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Enterprise -->
+                <div class="col-lg-3 col-md-6">
+                    <div class="pricing-card scroll-fade">
+                        <div class="card-header-custom">
+                            <h3>Enterprise</h3>
+                            <p>Customize workforce analytics to your enterprise's needs</p>
+                        </div>
+                        <div class="price">
+                            <div class="price-amount" style="font-size:2.6rem">Custom</div>
+                            <div class="price-billing" style="margin-top:1rem">Monthly & annual plan options available</div>
+                        </div>
+                        <ul class="features-list">
+                            <li>Everything in Premium, plus:</li>
+                            <li>Private Cloud Deployment</li>
+                            <li>Customizable BI Dashboards</li>
+                            <li>Custom pricing and contract terms</li>
+                            <li>Guided implementation</li>
+                            <li>Professional Services</li>
+                            <li>Custom development</li>
+                        </ul>
+                        <div class="mt-auto pt-3">
+                            <a href="#contact" class="btn-custom btn-outline-custom w-100">Contact Sales</a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="text-center mt-5 scroll-fade">
+                <a href="#comparison" class="btn-custom btn-outline-custom">Compare All Features</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ ADD-ONS ══════════════ -->
+    <section class="section-padding" id="addons" style="background:var(--bg-light)">
+        <div class="container-custom">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-tag">Extras</span>
+                <h2 class="section-title">Optional Add-ons</h2>
+                <p class="section-subtitle">Enhance Basic and Standard Plans with these additional features</p>
+            </div>
+
+            <div class="row g-4">
+                <div class="col-lg-3 col-md-6">
+                    <div class="addon-card scroll-fade">
+                        <div class="addon-header">
+                            <div class="addon-name"><h4>Software Cost Insights</h4></div>
+                            <div class="addon-price">
+                                <div class="addon-price-amount">$3</div>
+                                <div class="addon-price-period">per user/mo</div>
+                            </div>
+                        </div>
+                        <p class="addon-description">Identify underused tools, track license costs, and optimize spending across your organization</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="addon-card scroll-fade">
+                        <div class="addon-header">
+                            <div class="addon-name"><h4>Benchmarks AI</h4></div>
+                            <div class="addon-price">
+                                <div class="addon-price-amount">$2</div>
+                                <div class="addon-price-period">per user/mo</div>
+                            </div>
+                        </div>
+                        <p class="addon-description">Compare productivity using AI-matched benchmarks from 250K+ users to set smarter goals</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="addon-card scroll-fade">
+                        <div class="addon-header">
+                            <div class="addon-name"><h4>Unusual Activity Reporting</h4></div>
+                            <div class="addon-price">
+                                <div class="addon-price-amount">$2</div>
+                                <div class="addon-price-period">per user/mo</div>
+                            </div>
+                        </div>
+                        <p class="addon-description">AI algorithms to detect anomalies like mouse jigglers or keyboard simulators</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="addon-card scroll-fade">
+                        <div class="addon-header">
+                            <div class="addon-name"><h4>Meeting Insights</h4></div>
+                            <div class="addon-price">
+                                <div class="addon-price-amount">$2</div>
+                                <div class="addon-price-period">per user/mo</div>
+                            </div>
+                        </div>
+                        <p class="addon-description">Uncover the true cost of meetings with metrics on time, idle minutes, and group comparisons</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="addon-card scroll-fade">
+                        <div class="addon-header">
+                            <div class="addon-name"><h4>Office vs Remote Report</h4></div>
+                            <div class="addon-price">
+                                <div class="addon-price-amount">$2</div>
+                                <div class="addon-price-period">per user/mo</div>
+                            </div>
+                        </div>
+                        <p class="addon-description">Analyze and compare productivity between in-office and remote employees</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="addon-card scroll-fade">
+                        <div class="addon-header">
+                            <div class="addon-name"><h4>Video Screen Recording</h4></div>
+                            <div class="addon-price">
+                                <div class="addon-price-amount">$3</div>
+                                <div class="addon-price-period">per user/mo</div>
+                            </div>
+                        </div>
+                        <p class="addon-description">Analyze task completion, uncover bottlenecks, and gain context through process flow observation</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="addon-card scroll-fade">
+                        <div class="addon-header">
+                            <div class="addon-name"><h4>Single Sign On (SSO)</h4></div>
+                            <div class="addon-price">
+                                <div class="addon-price-amount">$10</div>
+                                <div class="addon-price-period">per account/mo</div>
+                            </div>
+                        </div>
+                        <p class="addon-description">Enable secure, one-click login with SSO. Improve access and reduce password fatigue</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="addon-card scroll-fade">
+                        <div class="addon-header">
+                            <div class="addon-name"><h4>BigQuery Access</h4></div>
+                            <div class="addon-price">
+                                <div class="addon-price-amount">$150</div>
+                                <div class="addon-price-period">per account/mo</div>
+                            </div>
+                        </div>
+                        <p class="addon-description">Access BigQuery datasets to turn raw data into insights for informed decision making</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ TESTIMONIAL ══════════════ -->
+    <section class="testimonial-section">
+        <div class="container-custom" style="position:relative;z-index:2">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 scroll-fade">
+                    <div class="testimonial-metric">40% Higher Productivity</div>
+                    <p class="testimonial-quote">"Increase by 40% in first week after implementing with programmers. DeskTime + Agile = Success!"</p>
+                    <p class="testimonial-author">— Jesse E., Capterra Reviewer</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ FAQ ══════════════ -->
+    <section class="section-padding" id="faq" style="background:var(--bg-light)">
+        <div class="container-custom">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-tag">FAQ</span>
+                <h2 class="section-title">Frequently Asked Questions</h2>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-lg-10">
+                    <div class="faq-item scroll-fade">
+                        <div class="faq-question">What is included in a DeskTime Trial?</div>
+                        <p class="faq-answer">When you sign up for a DeskTime trial for the first time, you'll receive two weeks of free access to all available features on our Premium plan, without limitations. At the end of the two weeks, you can choose to stay on Premium or downgrade to a lower tier plan.</p>
+                    </div>
+                    <div class="faq-item scroll-fade">
+                        <div class="faq-question">How will I explain DeskTime to my teams?</div>
+                        <p class="faq-answer">The aim of DeskTime is not to monitor what your teams are doing. It's to monitor and measure how effective they are, so you can protect your business. Monitor automatically in the background or teach your teams to stay accountable with the interactive desktop app.</p>
+                    </div>
+                    <div class="faq-item scroll-fade">
+                        <div class="faq-question">What are my billing options?</div>
+                        <p class="faq-answer">DeskTime offers monthly and annual billing options. Customers who pay annually receive two months free, a 16.6% discount on the monthly price. We accept payments from major credit card providers including Visa, Mastercard, American Express, and Discover.</p>
+                    </div>
+                    <div class="faq-item scroll-fade">
+                        <div class="faq-question">Does DeskTime have a refund policy?</div>
+                        <p class="faq-answer">Yes, we offer a comprehensive refund policy. Please contact our support team for specific details about your situation and eligibility.</p>
+                    </div>
+                    <div class="faq-item scroll-fade">
+                        <div class="faq-question">How long does it take to implement DeskTime?</div>
+                        <p class="faq-answer">Implementation is quick — most teams can get started within a day. For larger setups, we offer guided onboarding to ensure everything runs smoothly.</p>
+                    </div>
+                    <div class="faq-item scroll-fade">
+                        <div class="faq-question">How can I cancel my DeskTime account?</div>
+                        <p class="faq-answer">If you need to cancel your DeskTime account, log in as the company owner, navigate to Settings / Billing, and look for the Cancel account link. After clicking, you'll be asked why you want to cancel before completing the process.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ CTA ══════════════ -->
+    <section class="cta-section">
+        <div class="container-custom">
+            <div class="cta-content scroll-fade">
+                <div class="row justify-content-center">
+                    <div class="col-lg-8">
+                        <h2>See which plan is best for your business</h2>
+                        <p>Speak to one of our product experts to find out more about our plans</p>
+                        <div class="d-flex gap-3 justify-content-center flex-wrap">
+                            <a href="#contact" class="btn-custom btn-white-custom arrow-link" style="font-size:1.1rem;padding:1rem 2.5rem">
+                                Contact Sales <span class="arrow">→</span>
+                            </a>
+                            <a href="#trial" class="btn-custom btn-outline-white-custom">Start Free Trial</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ FOOTER ══════════════ -->
+    <footer class="footer">
+        <div class="container-custom">
+            <div class="row g-5">
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Products</h4>
+                    <ul class="footer-links">
+                        <li><a href="/Products/features.html">Features</a></li>
+                        <li><a href="/Products/Pricingg.html">Pricing</a></li>
+                        <li><a href="#">Integrations</a></li>
+                        <li><a href="#">Get started</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Use Case</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Use Case/product-analytics.html">Productivity Analytics</a></li>
+                        <li><a href="../Use Case/Workforce-Analytics.html">Workforce Analytics</a></li>
+                        <li><a href="../Use Case/Distributed-workforce.html">Distributed Workforce</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Features</h4>
+                    <ul class="footer-links">
+                      <li><a href="#">Benchmarks AI</a></li>
+                        <li><a href="../Features/employee-monitoring.html">Employee Monitoring</a></li>
+                        <li><a href="../Features/time-tracking.html">Time Tracking</a></li>
+                        <li><a href="../Features/payroll.html">Payroll</a></li>
+                        <li><a href="../Features/TimeManagement.html">Time Management</a></li>
+                        <li><a href="../Features/Screen_Monitoring.html">Screen Monitoring</a></li>
+                        <li><a href="../Features/attendance.html">Attendance</a></li>
+                        <li><a href="../Features/Unusual_Activity_Report.html">Unusual Activity Report</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Workforce Type</h4>
+                    <ul class="footer-links">
+                       <li><a href="../Workforce Type/remote.html">Remote</a></li>
+                        <li><a href="../Workforce Type/hybrid.html">Hybrid</a></li>
+                        <li><a href="../Workforce Type/in-office.html">In-Office</a></li>
+                        <li><a href="../Workforce Type/enterprise.html">Enterprise</a></li>
+                        <li><a href="../Workforce Type/sme-smb.html">SME &amp; SMB</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Company/aboutus.html">About us</a></li>
+                        <li><a href="../Company/careers.html">Careers</a></li>
+                        <li><a href="../Company/TermsofService.html">Terms Of Service</a></li>
+                        <li><a href="../Company/privancypolicy.html">Privacy Policy</a></li>
+                    </ul>
+                    <div class="footer-social">
+                        <a href="https://linkedin.com" target="_blank" class="social-icon" aria-label="LinkedIn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+                                <circle cx="4" cy="4" r="2"/>
+                            </svg>
+                        </a>
+                        <a href="https://facebook.com" target="_blank" class="social-icon" aria-label="Facebook">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+                            </svg>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" class="social-icon" aria-label="Instagram">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="none" stroke="currentColor" stroke-width="2"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" class="social-icon" aria-label="Twitter">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+                            </svg>
+                        </a>
+                        <a href="https://youtube.com" target="_blank" class="social-icon" aria-label="YouTube">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23 9.7s-.23-1.62-.92-2.33c-.88-.92-1.86-.93-2.31-.98C16.57 6.14 12 6.14 12 6.14s-4.57 0-7.77.25c-.45.05-1.43.06-2.31.98C1.23 8.08 1 9.7 1 9.7S.77 11.55.77 13.4v1.73c0 1.85.23 3.7.23 3.7s.23 1.62.92 2.33c.88.92 2.04.89 2.56.99 1.85.18 7.52.23 7.52.23s4.58-.01 7.77-.26c.45-.05 1.43-.06 2.31-.98.69-.71.92-2.33.92-2.33s.23-1.85.23-3.7v-1.73c0-1.85-.23-3.7-.23-3.7zM9.54 15.57V9.43l6 3.07-6 3.07z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 DeskTime. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Navbar scroll effect
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 50));
+
+        // Footer accordion for mobile
+        document.querySelectorAll('.footer-column').forEach(col => {
+            col.querySelector('h4')?.addEventListener('click', () => {
+                if (window.innerWidth > 768) return;
+                col.classList.toggle('active');
+            });
+        });
+
+        // Scroll fade (IntersectionObserver)
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting)
+                    setTimeout(() => entry.target.classList.add('visible'), i * 90);
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.scroll-fade').forEach(el => io.observe(el));
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const t = document.querySelector(a.getAttribute('href'));
+                if (!t) return;
+                e.preventDefault();
+                window.scrollTo({ top: t.offsetTop - 82, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+
+</html>

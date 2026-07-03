@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Small and Medium Business Productivity | DeskTime</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00d4aa;
+            --primary-dark: #00b892;
+            --secondary: #ff6b6b;
+            --dark: #1a1d29;
+            --dark-light: #2a2d3a;
+            --text: #1a1d29;
+            --text-light: #6b7280;
+            --bg: #ffffff;
+            --bg-light: #f8fafc;
+            --accent-purple: #8b5cf6;
+            --accent-blue: #3b82f6;
+            --accent-pink: #ec4899;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background: var(--bg);
+        }
+
+        .container-custom {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ============================================
+           NAVBAR — exact remembered style
+        ============================================ */
+        .navbar-custom {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+
+        .navbar-custom.scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            z-index: 1002;
+            position: relative;
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 0.6s ease forwards;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--text);
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.25rem;
+        }
+
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 100%;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transition: width 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .navbar-nav .nav-link:hover::before { width: 120%; }
+        .navbar-nav .nav-link:hover::after  { width: 100%; }
+
+        /* ── BUTTONS ── */
+        .btn-custom {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+
+        .btn-custom:hover::before { width: 300px; height: 300px; }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(0, 212, 170, 0.5);
+            color: white;
+        }
+
+        .btn-outline-custom {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--text);
+        }
+
+        .btn-outline-custom:hover {
+            background: var(--text);
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn-white-custom {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .btn-white-custom:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 30px rgba(255, 255, 255, 0.35);
+            color: var(--primary);
+        }
+
+        .btn-outline-white-custom {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+        }
+
+        .btn-outline-white-custom:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: white;
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+        }
+
+        .arrow { display: inline-block; transition: transform 0.3s ease; }
+        .arrow-link:hover .arrow { transform: translateX(5px); }
+
+        /* ============================================
+           SECTION HELPERS
+        ============================================ */
+        .section-padding { padding: 8rem 0; }
+
+        .section-tag {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(139, 92, 246, 0.1));
+            color: var(--primary);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: transform 0.3s ease;
+        }
+
+        .section-tag:hover { transform: translateY(-2px); }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .section-description {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            max-width: 720px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* ============================================
+           HERO SECTION
+        ============================================ */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 110px;
+            padding-bottom: 5rem;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #fefce8 0%, #f0fdf4 50%, #e0f2fe 100%);
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 900px; height: 900px;
+            background: radial-gradient(circle, rgba(0, 212, 170, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -450px; right: -300px;
+            animation: floatOrb 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.07) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -200px; left: -100px;
+            animation: floatOrb 28s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33%       { transform: translate(30px, -30px) rotate(120deg); }
+            66%       { transform: translate(-20px, 20px) rotate(240deg); }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .hero-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-lead {
+            font-size: clamp(1.1rem, 1.8vw, 1.35rem);
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            max-width: 560px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero-image {
+            animation: fadeInRight 1s ease-out;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.14);
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .hero-image:hover {
+            transform: scale(1.02) translateY(-8px);
+            box-shadow: 0 40px 90px rgba(0, 0, 0, 0.18);
+        }
+
+        .hero-image img { width: 100%; display: block; }
+
+        /* Stat boxes */
+        .stat-box {
+            background: white;
+            border-radius: 20px;
+            padding: 1.5rem 1rem;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.35s ease;
+        }
+
+        .stat-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 18px 40px rgba(0, 212, 170, 0.18);
+            border-color: var(--primary);
+        }
+
+        .stat-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }
+
+        .stat-label { font-size: 0.82rem; color: var(--text-light); font-weight: 500; }
+
+        /* ============================================
+           BENEFIT CARDS
+        ============================================ */
+        .benefit-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            border: 2px solid rgba(0, 0, 0, 0.04);
+            transition: all 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+        }
+
+        .benefit-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.45s ease;
+        }
+
+        .benefit-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 24px 60px rgba(0, 212, 170, 0.18);
+            border-color: var(--primary);
+        }
+
+        .benefit-card:hover::before { transform: scaleX(1); }
+
+        .b-icon {
+            width: 66px; height: 66px;
+            border-radius: 18px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.9rem;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(139, 92, 246, 0.1));
+            transition: all 0.35s ease;
+        }
+
+        .benefit-card:hover .b-icon {
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .benefit-card h5 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 0.75rem;
+        }
+
+        .benefit-card p {
+            color: var(--text-light);
+            font-size: 0.97rem;
+            line-height: 1.75;
+            margin: 0;
+        }
+
+        /* ============================================
+           FEATURE SECTIONS
+        ============================================ */
+        .feat-text h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem, 3vw, 2.8rem);
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .feat-text p {
+            color: var(--text-light);
+            font-size: 1.05rem;
+            line-height: 1.8;
+        }
+
+        .check-list { list-style: none; padding: 0; margin-top: 1.25rem; }
+
+        .check-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: var(--text-light);
+            line-height: 1.65;
+            margin-bottom: 0.85rem;
+            font-size: 0.97rem;
+            transition: transform 0.2s ease;
+        }
+
+        .check-list li:hover { transform: translateX(4px); }
+
+        .check-list li::before {
+            content: '✓';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 22px; height: 22px;
+            min-width: 22px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            color: white;
+            border-radius: 50%;
+            font-size: 0.75rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+
+        /* Feature visual placeholder */
+        .feat-visual {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.06), rgba(139, 92, 246, 0.06));
+            border-radius: 24px;
+            padding: 3.5rem 2rem;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid rgba(0, 212, 170, 0.12);
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .feat-visual:hover {
+            border-color: var(--primary);
+            box-shadow: 0 16px 50px rgba(0, 212, 170, 0.12);
+            transform: translateY(-4px);
+        }
+
+        .feat-visual-icon {
+            font-size: 5rem;
+            margin-bottom: 1.2rem;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .feat-visual:hover .feat-visual-icon { transform: scale(1.1) rotate(-5deg); }
+
+        .feat-visual h5 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .feat-visual p { color: var(--text-light); margin: 0; }
+
+        /* ============================================
+           RESOURCE BANNER (dark)
+        ============================================ */
+        .resource-dark {
+            padding: 8rem 0;
+            background: var(--dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .resource-dark::before {
+            content: '';
+            position: absolute;
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(0, 212, 170, 0.08), transparent 70%);
+            border-radius: 50%;
+            top: -350px; right: -200px;
+            animation: floatOrb 22s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .resource-card {
+            background: var(--dark-light);
+            border-radius: 28px;
+            padding: 3.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .resource-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+        }
+
+        .resource-card:hover {
+            border-color: rgba(0, 212, 170, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .resource-tag {
+            display: inline-block;
+            background: rgba(0, 212, 170, 0.2);
+            color: var(--primary);
+            padding: 0.45rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+
+        .resource-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+            font-weight: 900;
+            color: white;
+            line-height: 1.3;
+            margin-bottom: 1rem;
+        }
+
+        .resource-card p { color: rgba(255, 255, 255, 0.7); line-height: 1.8; }
+
+        .resource-visual {
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            border-radius: 22px;
+            padding: 3rem;
+            text-align: center;
+            color: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .resource-visual:hover {
+            transform: scale(1.02) translateY(-4px);
+            box-shadow: 0 20px 50px rgba(0, 212, 170, 0.35);
+        }
+
+        .resource-visual-icon { font-size: 4.5rem; margin-bottom: 1.2rem; }
+        .resource-visual h4 { font-size: 1.35rem; font-weight: 700; margin-bottom: 0.6rem; }
+        .resource-visual p  { font-size: 0.92rem; opacity: 0.88; margin: 0; }
+
+        /* ============================================
+           TESTIMONIALS (dark)
+        ============================================ */
+        .testi-dark {
+            padding: 8rem 0;
+            background: var(--dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testi-dark::before {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(0, 212, 170, 0.09), transparent 70%);
+            border-radius: 50%;
+            top: -280px; left: -150px;
+            pointer-events: none;
+        }
+
+        .testi-dark::after {
+            content: '';
+            position: absolute;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.07), transparent 70%);
+            border-radius: 50%;
+            bottom: -150px; right: -100px;
+            pointer-events: none;
+        }
+
+        .testi-card {
+            background: var(--dark-light);
+            border-radius: 22px;
+            padding: 2.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.07);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testi-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .testi-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(0, 212, 170, 0.15);
+        }
+
+        .testi-card:hover::before { transform: scaleX(1); }
+
+        .testi-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }
+
+        .testi-lbl { font-size: 1rem; font-weight: 700; color: white; margin: 0.5rem 0 1rem; }
+        .testi-quote { color: rgba(255, 255, 255, 0.7); font-style: italic; line-height: 1.75; font-size: 0.95rem; }
+        .testi-author { color: rgba(255, 255, 255, 0.4); font-size: 0.88rem; margin-top: 1rem; }
+
+        /* ============================================
+           SUCCESS STORY
+        ============================================ */
+        .story-card {
+            background: white;
+            border-radius: 28px;
+            padding: 3.5rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+            border: 2px solid rgba(0, 0, 0, 0.04);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .story-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .story-card:hover::before { transform: scaleX(1); }
+
+        .story-tag {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.12), rgba(139, 92, 246, 0.12));
+            color: var(--primary);
+            padding: 0.45rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .story-card h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+            font-weight: 900;
+            color: var(--dark);
+            line-height: 1.3;
+        }
+
+        .story-card p { color: var(--text-light); line-height: 1.8; }
+
+        .story-visual {
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            border-radius: 22px;
+            padding: 2.5rem;
+            color: white;
+            height: 100%;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+        }
+
+        .story-visual:hover {
+            transform: scale(1.02) translateY(-4px);
+            box-shadow: 0 20px 50px rgba(0, 212, 170, 0.35);
+        }
+
+        .story-visual h4 { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; }
+
+        .s-stat {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-start;
+            margin-bottom: 1.25rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 14px;
+            transition: background 0.3s ease;
+        }
+
+        .s-stat:hover { background: rgba(255, 255, 255, 0.18); }
+        .s-stat-num { font-size: 1.65rem; font-weight: 800; flex-shrink: 0; line-height: 1.1; }
+        .s-stat-desc { font-size: 0.9rem; opacity: 0.88; line-height: 1.5; }
+
+        /* ============================================
+           CTA SECTION
+        ============================================ */
+        .cta-section {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 100%; height: 100%;
+            top: 0; left: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 50%;
+            top: -350px; right: -200px;
+            pointer-events: none;
+        }
+
+        .cta-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 900;
+            color: white;
+            margin-bottom: 1.25rem;
+            position: relative; z-index: 1;
+        }
+
+        .cta-section p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 2.5rem;
+            max-width: 640px;
+            margin-left: auto; margin-right: auto;
+            line-height: 1.8;
+            position: relative; z-index: 1;
+        }
+
+        .cta-section .btn-row { position: relative; z-index: 1; }
+
+        /* ============================================
+           SCROLL FADE
+        ============================================ */
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+
+        .scroll-fade.visible { opacity: 1; transform: translateY(0); }
+
+        /* ============================================
+           FOOTER — exact remembered style
+        ============================================ */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        .footer-column h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .footer-links { list-style: none; padding: 0; margin: 0; }
+        .footer-links li { margin-bottom: 0.8rem; }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0;
+            width: 0; height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .footer-links a:hover { color: white; transform: translateX(5px); }
+        .footer-links a:hover::after { width: 100%; }
+        .footer-links a.active-page { color: var(--primary); }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-social { display: flex; gap: 1rem; margin-top: 2rem; }
+
+        .social-icon {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-decoration: none;
+            color: white;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* ============================================
+           RESPONSIVE
+        ============================================ */
+        @media (max-width: 991px) {
+            .section-padding { padding: 5rem 0; }
+            .resource-dark, .testi-dark, .cta-section { padding: 5rem 0; }
+        }
+
+        @media (max-width: 768px) {
+            .container-custom { padding: 0 1.25rem; }
+            .hero-section { padding-top: 90px; min-height: auto; padding-bottom: 3rem; }
+
+            .navbar-custom .navbar-collapse {
+                background: white;
+                padding: 1rem;
+                border-radius: 10px;
+                margin-top: 1rem;
+                box-shadow: 0 10px 27px rgba(0, 0, 0, 0.05);
+            }
+
+            .story-card, .resource-card { padding: 2rem; }
+            .story-visual, .resource-visual { margin-top: 1.5rem; }
+
+            .footer-column {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 1rem 0;
+            }
+            .footer-column h4 {
+                cursor: pointer;
+                padding: 0.5rem 0;
+                margin-bottom: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                user-select: none;
+            }
+            .footer-column h4::after { content: '+'; font-size: 1.5rem; font-weight: 300; color: var(--primary); }
+            .footer-column.active h4::after { content: '−'; }
+            .footer-links { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease; }
+            .footer-column.active .footer-links { max-height: 600px; opacity: 1; padding-top: 1rem; padding-bottom: 1rem; }
+            .footer-social { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease; }
+            .footer-column.active .footer-social { max-height: 200px; opacity: 1; padding-top: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ══════════════ NAVBAR ══════════════ -->
+    <nav class="navbar navbar-expand-lg navbar-custom" id="mainNav">
+        <div class="container-fluid nav-container">
+            <a href="../Home.html" class="logo">DeskTime</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto gap-lg-1">
+                    <li class="nav-item"><a class="nav-link" href="../Products/features.html">Features</a></li>
+                   <li class="nav-item"><a class="nav-link" href="../Home.html#solutions">Solutions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Products/Pricingg.html">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Company/aboutus.html">About</a></li>
+                </ul>
+                <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0">
+                    <a href="../login.html" class="btn-custom btn-outline-custom">Login</a>
+                    <a href="#" class="btn-custom btn-primary-custom arrow-link">Start Free Trial <span class="arrow">→</span></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ══════════════ HERO ══════════════ -->
+    <section class="hero-section">
+        <div class="container-custom w-100" style="position:relative;z-index:2">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6 scroll-fade">
+                    <h1>Make <span class="highlight">Better Decisions</span><br>for Your Business Every Day</h1>
+                    <p class="hero-lead">Get insights into your team's workloads, activities, and schedules with employee-friendly automated time tracking and productivity analytics built for small and medium businesses.</p>
+                    <div class="d-flex flex-wrap gap-3 mb-5">
+                        <a href="#" class="btn-custom btn-primary-custom arrow-link">Get a Demo <span class="arrow">→</span></a>
+                        <a href="#" class="btn-custom btn-outline-custom">Try it Free</a>
+                    </div>
+                    <div class="row g-3">
+                        <div class="col-4"><div class="stat-box"><span class="stat-num">30%</span><span class="stat-label">More Productive</span></div></div>
+                        <div class="col-4"><div class="stat-box"><span class="stat-num">35%</span><span class="stat-label">More Efficient</span></div></div>
+                        <div class="col-4"><div class="stat-box"><span class="stat-num">6-fig</span><span class="stat-label">License Savings</span></div></div>
+                    </div>
+                </div>
+                <div class="col-lg-6 scroll-fade">
+                    <div class="hero-image">
+                        <img src="data:image/svg+xml,%3Csvg width='600' height='480' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='600' height='480' fill='%23f0fdf4' rx='24'/%3E%3Crect x='40' y='40' width='520' height='50' fill='%23ffffff' rx='12'/%3E%3Crect x='40' y='110' width='255' height='150' fill='%23ffffff' rx='12'/%3E%3Crect x='310' y='110' width='255' height='150' fill='%23ffffff' rx='12'/%3E%3Crect x='40' y='280' width='520' height='170' fill='%23ffffff' rx='12'/%3E%3Crect x='60' y='300' width='480' height='14' fill='%2300d4aa' opacity='0.28' rx='4'/%3E%3Crect x='60' y='328' width='380' height='14' fill='%238b5cf6' opacity='0.2' rx='4'/%3E%3Crect x='60' y='356' width='300' height='14' fill='%2300d4aa' opacity='0.48' rx='4'/%3E%3Crect x='60' y='384' width='430' height='14' fill='%238b5cf6' opacity='0.28' rx='4'/%3E%3Ctext x='167' y='188' text-anchor='middle' font-size='13' fill='%231a1d29' font-family='sans-serif' font-weight='700'%3ETime Tracking%3C/text%3E%3Ctext x='437' y='188' text-anchor='middle' font-size='13' fill='%231a1d29' font-family='sans-serif' font-weight='700'%3EProductivity%3C/text%3E%3Ctext x='167' y='218' text-anchor='middle' font-size='24' fill='%2300d4aa' font-family='sans-serif' font-weight='800'%3E87%25%3C/text%3E%3Ctext x='437' y='218' text-anchor='middle' font-size='24' fill='%238b5cf6' font-family='sans-serif' font-weight='800'%3E%2B23%25%3C/text%3E%3C/svg%3E" alt="SMB Dashboard">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ KEY BENEFITS ══════════════ -->
+    <section class="section-padding" id="features" style="background:var(--bg)">
+        <div class="container-custom">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-tag">Built for SMEs &amp; SMBs</span>
+                <h2 class="section-title mt-2">Everything Your Growing Business Needs</h2>
+                <p class="section-description mt-3">Affordable, powerful, and easy to use — DeskTime gives small and medium businesses the workforce insights of large enterprises, without the complexity.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-sm-6 col-xl-4"><div class="benefit-card scroll-fade"><div class="b-icon">⏰</div><h5>Automated Workday Analytics</h5><p>Wherever your people work, reduce management time and increase your visibility of what they're working on — automatically, without manual timers.</p></div></div>
+                <div class="col-sm-6 col-xl-4"><div class="benefit-card scroll-fade"><div class="b-icon">💰</div><h5>Control Costs and Margins</h5><p>Accurate productivity data helps you eliminate inefficiencies and manage costs while maintaining quality and hitting SLAs on every project.</p></div></div>
+                <div class="col-sm-6 col-xl-4"><div class="benefit-card scroll-fade"><div class="b-icon">🏆</div><h5>Improve Everyone's Performance</h5><p>Clone your top performers by sharing what they do with your teams, and empower everyone to continuously improve and grow.</p></div></div>
+                <div class="col-sm-6 col-xl-4"><div class="benefit-card scroll-fade"><div class="b-icon">📋</div><h5>Proof of Work &amp; Audit Trails</h5><p>Record and analyze your team's work with real-time dashboards. Optional privacy-blurred screenshots create audit trails for compliance and billing.</p></div></div>
+                <div class="col-sm-6 col-xl-4"><div class="benefit-card scroll-fade"><div class="b-icon">❤️</div><h5>Employee Wellbeing</h5><p>Monitor work/life balance to prevent burnout. Look out for employees who need support, and create a workplace where people actually want to stay.</p></div></div>
+                <div class="col-sm-6 col-xl-4"><div class="benefit-card scroll-fade"><div class="b-icon">🔗</div><h5>Easy Integrations</h5><p>Connect DeskTime with 60+ tools your business already uses — from project management to payroll — for a seamless, centralized workflow.</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ FEATURE: TIME TRACKING ══════════════ -->
+    <section class="section-padding" style="background:var(--bg-light)">
+        <div class="container-custom">
+            <div class="row align-items-center g-5 scroll-fade">
+                <div class="col-lg-6">
+                    <div class="feat-text">
+                        <span class="section-tag">Time Tracking</span>
+                        <h2 class="mt-2">Track Your Team's Productivity to Improve Efficiency</h2>
+                        <p>DeskTime's productivity features ensure your team is focused wherever they work — without adding management overhead or making employees feel watched.</p>
+                        <ul class="check-list">
+                            <li>Reduce your admin time by automatically checking employee attendance and timesheets</li>
+                            <li>Get email alerts when staff don't show up and keep everyone focused with friendly pop-ups</li>
+                            <li>Know what websites and apps your teams are using so you can be sure they're being productive</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feat-visual">
+                        <div>
+                            <span class="feat-visual-icon">⏰</span>
+                            <h5>Automated Time Tracking</h5>
+                            <p>Runs in the background — no manual timers needed</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ FEATURE: PROOF OF WORK ══════════════ -->
+    <section class="section-padding" style="background:var(--bg)">
+        <div class="container-custom">
+            <div class="row align-items-center g-5 flex-lg-row-reverse scroll-fade">
+                <div class="col-lg-6">
+                    <div class="feat-text">
+                        <span class="section-tag">Proof of Work</span>
+                        <h2 class="mt-2">Know What Your Teams Are Working On</h2>
+                        <p>You don't just want to see what everyone is working on — you need to record and analyze it for billing accuracy, compliance, and performance reviews.</p>
+                        <ul class="check-list">
+                            <li>Measure everyone's performance in a consistent manner so you can compare people and teams</li>
+                            <li>Record time tracking data and analyze it with real-time dashboards and customized reporting</li>
+                            <li>Optional privacy-blurred screenshots act as an audit trail of employees' work for compliance and security</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feat-visual">
+                        <div>
+                            <span class="feat-visual-icon">📋</span>
+                            <h5>Audit Trails</h5>
+                            <p>Retain proof of work for billing, compliance &amp; reviews</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ FEATURE: PRODUCTIVITY ══════════════ -->
+    <section class="section-padding" style="background:var(--bg-light)">
+        <div class="container-custom">
+            <div class="row align-items-center g-5 scroll-fade">
+                <div class="col-lg-6">
+                    <div class="feat-text">
+                        <span class="section-tag">Productivity</span>
+                        <h2 class="mt-2">Take On More Work by Improving Productivity</h2>
+                        <p>Fix your efficiency and productivity challenges so you can get more done with the resources you have — and scale your business without adding headcount.</p>
+                        <ul class="check-list">
+                            <li>Share real-time dashboards and customized reports across your team to promote openness and collaboration</li>
+                            <li>Set clear goals and expectations based on real data, and understand what people find easy and hard to do</li>
+                            <li>Fix inefficient processes and find new opportunities for productivity gains — including what to automate</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feat-visual">
+                        <div>
+                            <span class="feat-visual-icon">📈</span>
+                            <h5>Productivity Gains</h5>
+                            <p>Identify and eliminate inefficiencies at every level</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ FEATURE: COST CONTROL ══════════════ -->
+    <section class="section-padding" style="background:var(--bg)">
+        <div class="container-custom">
+            <div class="row align-items-center g-5 flex-lg-row-reverse scroll-fade">
+                <div class="col-lg-6">
+                    <div class="feat-text">
+                        <span class="section-tag">Cost Control</span>
+                        <h2 class="mt-2">Increase Profitability to Scale Faster</h2>
+                        <p>With tracking data you can make better decisions about deploying resources to achieve the results you want at a lower cost — improving margins for every client and project.</p>
+                        <ul class="check-list">
+                            <li>Reduce management time by automating reporting, timesheets, payroll and compliance</li>
+                            <li>Save money by optimizing all your resources — staff, office space, software licences</li>
+                            <li>Deploy flexible, hybrid, or remote working to reduce or eliminate the cost of office space</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feat-visual">
+                        <div>
+                            <span class="feat-visual-icon">💰</span>
+                            <h5>Cost Savings</h5>
+                            <p>Six-figure savings in software and operational costs</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ FEATURE: PERFORMANCE ══════════════ -->
+    <section class="section-padding" style="background:var(--bg-light)">
+        <div class="container-custom">
+            <div class="row align-items-center g-5 scroll-fade">
+                <div class="col-lg-6">
+                    <div class="feat-text">
+                        <span class="section-tag">Performance</span>
+                        <h2 class="mt-2">Empower Your Team Members to Improve</h2>
+                        <p>Analyze and share time tracking and productivity data so everyone can improve — and your best performers become a template for the whole team to follow.</p>
+                        <ul class="check-list">
+                            <li>Share data on how your best performers work so other team members can see how it's done</li>
+                            <li>See how individuals prefer to work so you can tailor their environment to get the best from them</li>
+                            <li>Recognize everyone for their achievements to boost employee engagement and reduce attrition</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feat-visual">
+                        <div>
+                            <span class="feat-visual-icon">🏆</span>
+                            <h5>Clone Your Top Performers</h5>
+                            <p>Share best practices across your entire team</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ FEATURE: EMPLOYEE EXPERIENCE ══════════════ -->
+    <section class="section-padding" style="background:var(--bg)">
+        <div class="container-custom">
+            <div class="row align-items-center g-5 flex-lg-row-reverse scroll-fade">
+                <div class="col-lg-6">
+                    <div class="feat-text">
+                        <span class="section-tag">Employee Experience</span>
+                        <h2 class="mt-2">Retain Employees by Creating a Great Place to Work</h2>
+                        <p>Keep hold of your best people by looking after their wellbeing and offering the flexibility that today's workforce expects — backed by real data, not guesswork.</p>
+                        <ul class="check-list">
+                            <li>Look out for staff burnout with the work/life balance widget to ensure nobody overworks</li>
+                            <li>Empower people to manage their own schedule and performance from anywhere</li>
+                            <li>Understand when a team member has a problem or when their behavior changes so you can reach out to help</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="feat-visual">
+                        <div>
+                            <span class="feat-visual-icon">❤️</span>
+                            <h5>Happy, Healthy Teams</h5>
+                            <p>Prevent burnout and improve retention with real data</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ RESOURCE BANNER ══════════════ -->
+    <section class="resource-dark">
+        <div class="container-custom" style="position:relative;z-index:2">
+            <div class="resource-card scroll-fade">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-7">
+                        <span class="resource-tag">Resource</span>
+                        <h2>Top 3 Strategies to Increase Employee Productivity</h2>
+                        <p class="mt-2">Based on the experiences of our most successful customers, here are the top 3 productivity strategies and how to use DeskTime data to get these valuable workday insights at your business.</p>
+                        <a href="#" class="btn-custom btn-primary-custom mt-3 arrow-link">Download Free Guide <span class="arrow">→</span></a>
+                    </div>
+                    <div class="col-lg-5">
+                        <div class="resource-visual">
+                            <div class="resource-visual-icon">📖</div>
+                            <h4>Free Productivity Guide</h4>
+                            <p>Proven strategies from DeskTime's most successful SME customers</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ TESTIMONIALS ══════════════ -->
+    <section class="testi-dark">
+        <div class="container-custom" style="position:relative;z-index:2">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-tag" style="background:rgba(0,212,170,0.2)">SME &amp; SMB Results</span>
+                <h2 class="section-title mt-2" style="color:white">SMEs Are Getting Real Results</h2>
+                <p class="mt-3" style="color:rgba(255,255,255,0.7);font-size:1.15rem">See what businesses like yours are achieving with DeskTime.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-md-4">
+                    <div class="testi-card scroll-fade">
+                        <div class="testi-num">30%</div>
+                        <div class="testi-lbl">More Productive</div>
+                        <p class="testi-quote">"DeskTime allowed us to identify the available time of employees, which led to a 30% increase in overall productivity."</p>
+                        <div class="testi-author">— Johan le Bail, Eufonie</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testi-card scroll-fade">
+                        <div class="testi-num">15%</div>
+                        <div class="testi-lbl">Per-Employee Productivity Increase</div>
+                        <p class="testi-quote">"Productivity analytics and more visible performance metrics helped increase productivity by 15% per employee across our team."</p>
+                        <div class="testi-author">— DeskTime SME Customer</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="testi-card scroll-fade">
+                        <div class="testi-num">2.5x</div>
+                        <div class="testi-lbl">Billing Accuracy Discovery</div>
+                        <p class="testi-quote">"We discovered that creating reports took us 2.5x longer than we were billing for — so we changed our pricing model immediately."</p>
+                        <div class="testi-author">— DeskTime SMB Customer</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ SUCCESS STORY ══════════════ -->
+    <section class="section-padding" style="background:var(--bg-light)">
+        <div class="container-custom">
+            <div class="story-card scroll-fade">
+                <div class="row g-5 align-items-center">
+                    <div class="col-lg-6">
+                        <span class="story-tag">Success Story</span>
+                        <h2 class="mt-3">DeskTime Saves Us SIX Figures Per Year in Software Licenses!</h2>
+                        <p class="mt-3">One of DeskTime's customers discovered they had hundreds of unused software licenses eating into their budget. With no visibility into who was actually using what, they were paying for tools nobody needed.</p>
+                        <p class="mt-2">"We used to have a couple hundred licenses of a popular graphics design app, and now we have less than 50. We had little visibility into who was actually using the app. There was no way to get this data other than using DeskTime."</p>
+                        <a href="#" class="btn-custom btn-primary-custom mt-4 arrow-link">Read the Full Story <span class="arrow">→</span></a>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="story-visual">
+                            <h4>Personiv Results</h4>
+                            <div class="s-stat"><div class="s-stat-num">💰</div><div class="s-stat-desc">Six-figure annual savings in software licenses alone</div></div>
+                            <div class="s-stat"><div class="s-stat-num">200+</div><div class="s-stat-desc">Unused licenses identified and eliminated</div></div>
+                            <div class="s-stat"><div class="s-stat-num">✓</div><div class="s-stat-desc">Full visibility into who uses what, and when</div></div>
+                            <div class="s-stat"><div class="s-stat-num">📊</div><div class="s-stat-desc">Data-driven resource allocation across all teams</div></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ CTA ══════════════ -->
+    <section class="cta-section">
+        <div class="container-custom" style="position:relative;z-index:2">
+            <div class="scroll-fade">
+                <h2>Ready to Transform Your Business?</h2>
+                <p>Join thousands of small and medium businesses who trust DeskTime to boost productivity and grow smarter.</p>
+                <div class="btn-row d-flex flex-wrap justify-content-center gap-3">
+                    <a href="#" class="btn-custom btn-white-custom">Try it Free</a>
+                    <a href="#" class="btn-custom btn-outline-white-custom">Get a Demo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════════════ FOOTER — exact remembered style ══════════════ -->
+    <footer class="footer">
+        <div class="container-custom">
+            <div class="row g-5">
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Products</h4>
+                    <ul class="footer-links">
+                       <li><a href="../Products/features.html">Features</a></li>
+                        <li><a href="../Products/Pricingg.html">Pricing</a></li>
+                        <li><a href="#">Integrations</a></li>
+                        <li><a href="#">Get started</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Use Case</h4>
+                    <ul class="footer-links">
+                         <li><a href="../Use Case/product-analytics.html">Productivity Analytics</a></li>
+                        <li><a href="../Use Case/Workforce-Analytics.html">Workforce Analytics</a></li>
+                        <li><a href="../Use Case/Distributed-workforce.html">Distributed Workforce</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Features</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Benchmarks AI</a></li>
+                        <li><a href="../Features/employee-monitoring.html">Employee Monitoring</a></li>
+                        <li><a href="../Features/time-tracking.html">Time Tracking</a></li>
+                        <li><a href="../Features/payroll.html">Payroll</a></li>
+                        <li><a href="../Features/TimeManagement.html">Time Management</a></li>
+                        <li><a href="../Features/Screen_Monitoring.html">Screen Monitoring</a></li>
+                        <li><a href="../Features/attendance.html">Attendance</a></li>
+                        <li><a href="../Features/Unusual_Activity_Report.html">Unusual Activity Report</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Workforce Type</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Workforce Type/remote.html">Remote</a></li>
+                        <li><a href="../Workforce Type/hybrid.html">Hybrid</a></li>
+                        <li><a href="../Workforce Type/in-office.html">In-Office</a></li>
+                        <li><a href="../Workforce Type/enterprise.html">Enterprise</a></li>
+                        <li><a href="../Workforce Type/sme-smb.html">SME &amp; SMB</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Company/aboutus.html">About us</a></li>
+                        <li><a href="../Company/careers.html">Careers</a></li>
+                        <li><a href="../Company/TermsofService.html">Terms Of Service</a></li>
+                        <li><a href="../Company/privancypolicy.html">Privacy Policy</a></li>
+                    </ul>
+                    <div class="footer-social">
+                        <a href="https://linkedin.com" target="_blank" class="social-icon" aria-label="LinkedIn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+                        </a>
+                        <a href="https://facebook.com" target="_blank" class="social-icon" aria-label="Facebook">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" class="social-icon" aria-label="Instagram">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2"/></svg>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" class="social-icon" aria-label="Twitter">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+                        </a>
+                        <a href="https://youtube.com" target="_blank" class="social-icon" aria-label="YouTube">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M23 9.7s-.23-1.62-.92-2.33c-.88-.92-1.86-.93-2.31-.98C16.57 6.14 12 6.14 12 6.14s-4.57 0-7.77.25c-.45.05-1.43.06-2.31.98C1.23 8.08 1 9.7 1 9.7S.77 11.55.77 13.4v1.73c0 1.85.23 3.7.23 3.7s.23 1.62.92 2.33c.88.92 2.04.89 2.56.99 1.85.18 7.52.23 7.52.23s4.58-.01 7.77-.26c.45-.05 1.43-.06 2.31-.98.69-.71.92-2.33.92-2.33s.23-1.85.23-3.7v-1.73c0-1.85-.23-3.7-.23-3.7zM9.54 15.57V9.43l6 3.07-6 3.07z"/></svg>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 DeskTime. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 50));
+
+        // Footer accordion — mobile only
+        document.querySelectorAll('.footer-column').forEach(col => {
+            col.querySelector('h4')?.addEventListener('click', () => {
+                if (window.innerWidth > 768) return;
+                col.classList.toggle('active');
+            });
+        });
+
+        // Scroll-fade IntersectionObserver with stagger
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting)
+                    setTimeout(() => entry.target.classList.add('visible'), i * 90);
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.scroll-fade').forEach(el => io.observe(el));
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const t = document.querySelector(a.getAttribute('href'));
+                if (!t) return;
+                e.preventDefault();
+                window.scrollTo({ top: t.offsetTop - 82, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

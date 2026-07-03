@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features - DeskTime</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00d4aa;
+            --primary-dark: #00b892;
+            --secondary: #ff6b6b;
+            --dark: #1a1d29;
+            --dark-light: #2a2d3a;
+            --text: #1a1d29;
+            --text-light: #6b7280;
+            --bg: #ffffff;
+            --bg-light: #f8fafc;
+            --accent-purple: #8b5cf6;
+            --accent-blue: #3b82f6;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background: var(--bg);
+        }
+
+        .container-custom {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ============================
+           NAVBAR
+        ============================ */
+        .navbar-custom {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        .navbar-custom.scrolled { box-shadow: 0 4px 30px rgba(0,0,0,0.08); }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            z-index: 1002;
+            position: relative;
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 0.6s ease forwards;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--text);
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.25rem;
+        }
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 100%;
+            background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(139,92,246,0.1));
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transition: width 0.4s cubic-bezier(0.68,-0.55,0.265,1.55);
+        }
+        .navbar-nav .nav-link:hover { color: var(--primary); transform: translateY(-2px); }
+        .navbar-nav .nav-link:hover::before { width: 120%; }
+        .navbar-nav .nav-link:hover::after  { width: 100%; }
+
+        /* ============================
+           BUTTONS
+        ============================ */
+        .btn-custom {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.68,-0.55,0.265,1.55);
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            border-radius: 50%;
+            transform: translate(-50%,-50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        .btn-custom:hover::before { width: 300px; height: 300px; }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(0,212,170,0.3);
+        }
+        .btn-primary-custom:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(0,212,170,0.5);
+            color: white;
+        }
+        .btn-outline-custom {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--text);
+        }
+        .btn-outline-custom:hover {
+            background: var(--text);
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        }
+        .btn-white {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(255,255,255,0.25);
+        }
+        .btn-white:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 35px rgba(255,255,255,0.4);
+            color: var(--primary);
+        }
+
+        .arrow { display: inline-block; transition: transform 0.3s ease; }
+        .arrow-link:hover .arrow { transform: translateX(5px); }
+
+        /* ============================
+           HERO
+        ============================ */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 110px;
+            padding-bottom: 5rem;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #dbeafe 100%);
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 1000px; height: 1000px;
+            background: radial-gradient(circle, rgba(0,212,170,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -500px; right: -400px;
+            animation: floatOrb 25s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(139,92,246,0.07) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -200px; left: -100px;
+            animation: floatOrb 32s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0,0) rotate(0deg); }
+            33%       { transform: translate(30px,-30px) rotate(120deg); }
+            66%       { transform: translate(-20px,20px) rotate(240deg); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .hero-section h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem,5vw,4.8rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            animation: fadeInUp 0.8s ease-out;
+        }
+        .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-lead {
+            font-size: clamp(1.1rem,1.8vw,1.35rem);
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            max-width: 560px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .hero-feature-item {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            font-size: 1rem;
+            transition: transform 0.2s ease;
+        }
+        .hero-feature-item:hover { transform: translateX(4px); }
+        .hero-feature-item::before {
+            content: '✓';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 26px; height: 26px;
+            min-width: 26px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .trust-badge {
+            background: white;
+            padding: 0.7rem 1.4rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-light);
+            display: inline-block;
+            transition: all 0.3s ease;
+        }
+        .trust-badge:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,212,170,0.15);
+        }
+
+        .hero-image {
+            animation: fadeInRight 1s ease-out;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.14);
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        .hero-image:hover {
+            transform: scale(1.02) translateY(-8px);
+            box-shadow: 0 40px 90px rgba(0,0,0,0.18);
+        }
+        .hero-image img { width: 100%; display: block; }
+
+        /* ============================
+           SECTIONS
+        ============================ */
+        .section-padding { padding: 8rem 0; }
+
+        .section-tag {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(139,92,246,0.1));
+            color: var(--primary);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: transform 0.3s ease;
+        }
+        .section-tag:hover { transform: translateY(-2px); }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem,4vw,3.5rem);
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .section-description {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            max-width: 720px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* ============================
+           TABS
+        ============================ */
+        .tab {
+            padding: 0.8rem 1.8rem;
+            background: white;
+            border: 2px solid rgba(0,0,0,0.08);
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.68,-0.55,0.265,1.55);
+            color: var(--text);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+        }
+        .tab:hover {
+            border-color: var(--primary);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0,212,170,0.15);
+        }
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            color: white;
+            border-color: transparent;
+            box-shadow: 0 8px 24px rgba(0,212,170,0.3);
+        }
+        .tab-content-custom { display: none; }
+        .tab-content-custom.active { display: block; animation: fadeInUp 0.5s ease; }
+
+        .tab-text h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem,3vw,2.8rem);
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-weight: 900;
+        }
+        .tab-text h4 {
+            font-size: 1.25rem;
+            color: var(--primary);
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+        .tab-text p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 2rem;
+        }
+        .tab-visual {
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        .tab-visual:hover {
+            transform: scale(1.02) translateY(-6px);
+            box-shadow: 0 30px 70px rgba(0,0,0,0.14);
+        }
+        .tab-visual img { width: 100%; display: block; }
+
+        /* ============================
+           FEATURE ITEMS (small tiles)
+        ============================ */
+        .feature-item {
+            text-align: center;
+            padding: 1.75rem;
+            background: white;
+            border-radius: 20px;
+            border: 2px solid rgba(0,0,0,0.04);
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+        }
+        .feature-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        .feature-item:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 18px 50px rgba(0,212,170,0.15);
+            border-color: var(--primary);
+        }
+        .feature-item:hover::before { transform: scaleX(1); }
+        .feature-item h5 { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.8rem; color: var(--dark); }
+        .feature-item p  { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; margin: 0; }
+
+        /* ============================
+           CTA BANNER
+        ============================ */
+        .cta-banner {
+            padding: 7rem 0;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-banner::before {
+            content: '';
+            position: absolute;
+            width: 100%; height: 100%;
+            top: 0; left: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .cta-banner::after {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+            top: -350px; right: -200px;
+            pointer-events: none;
+        }
+        .cta-banner h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem,4vw,3.2rem);
+            font-weight: 900;
+            margin-bottom: 1.25rem;
+            position: relative;
+            z-index: 1;
+        }
+        .cta-banner p {
+            font-size: 1.2rem;
+            opacity: 0.92;
+            margin-bottom: 2.5rem;
+            max-width: 640px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+        .cta-banner .btn-white { position: relative; z-index: 1; }
+
+        /* ============================
+           TESTIMONIALS
+        ============================ */
+        .testimonial-card {
+            background: white;
+            padding: 3rem;
+            border-radius: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            border: 2px solid rgba(0,0,0,0.04);
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            position: relative;
+            height: 100%;
+            overflow: hidden;
+        }
+        .testimonial-card::before {
+            content: '"';
+            position: absolute;
+            top: 1.5rem; left: 2rem;
+            font-size: 6rem;
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+            opacity: 0.1;
+            line-height: 1;
+            pointer-events: none;
+        }
+        .testimonial-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        .testimonial-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 24px 60px rgba(0,212,170,0.16);
+            border-color: var(--primary);
+        }
+        .testimonial-card:hover::after { transform: scaleX(1); }
+
+        .testimonial-text {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+        .testimonial-result {
+            background: linear-gradient(135deg, rgba(0,212,170,0.08), rgba(139,92,246,0.08));
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .testimonial-result strong {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.6rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin-bottom: 0.3rem;
+            line-height: 1;
+        }
+        .testimonial-result p { color: var(--text-light); margin: 0; font-weight: 500; }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 1.2rem;
+            padding-top: 2rem;
+            border-top: 2px solid rgba(0,0,0,0.05);
+        }
+        .author-avatar {
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1.2rem; color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(0,212,170,0.3);
+            transition: transform 0.3s ease;
+        }
+        .testimonial-card:hover .author-avatar { transform: scale(1.1) rotate(5deg); }
+        .author-info h4 { font-weight: 700; font-size: 1.05rem; margin-bottom: 0.2rem; color: var(--dark); }
+        .author-info p  { color: var(--text-light); font-size: 0.9rem; margin: 0; }
+
+        /* ============================
+           INTEGRATIONS
+        ============================ */
+        .integration-logo {
+            background: white;
+            padding: 1.2rem 2rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+            display: flex;
+            align-items: center; justify-content: center;
+            border: 2px solid transparent;
+            opacity: 0.65;
+            filter: grayscale(60%);
+            transition: all 0.35s ease;
+        }
+        .integration-logo:hover {
+            transform: translateY(-6px) scale(1.05);
+            box-shadow: 0 16px 40px rgba(0,212,170,0.18);
+            border-color: var(--primary);
+            filter: grayscale(0%);
+            opacity: 1;
+        }
+
+        /* ============================
+           FEATURE CARDS (deep-dive)
+        ============================ */
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 2px solid rgba(0,0,0,0.04);
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.05);
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 24px 60px rgba(0,212,170,0.18);
+            border-color: var(--primary);
+        }
+        .feature-card:hover::before { transform: scaleX(1); }
+        .feature-card h4 { font-size: 1.25rem; font-weight: 700; margin-bottom: 0.8rem; color: var(--dark); }
+        .feature-card p  { color: var(--text-light); line-height: 1.8; margin: 0; font-size: 0.97rem; }
+
+        /* ============================
+           CATEGORY
+        ============================ */
+        .category-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.8rem,3vw,2.8rem);
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 0.8rem;
+        }
+        .category-subtitle { font-size: 1.2rem; color: var(--primary); font-weight: 600; margin-bottom: 0; }
+
+        /* ============================
+           CASE STUDY
+        ============================ */
+        .case-study-card {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 2rem;
+            border: 2px solid rgba(0,0,0,0.05);
+            transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+        }
+        .case-study-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        .case-study-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 28px 70px rgba(0,212,170,0.18);
+            border-color: var(--primary);
+        }
+        .case-study-card:hover::before { transform: scaleX(1); }
+
+        .case-study-title h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(1.5rem,2.5vw,2.2rem);
+            color: var(--dark);
+            margin-bottom: 1rem;
+            font-weight: 900;
+        }
+        .meta-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--text-light);
+            font-size: 0.95rem;
+            margin-right: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .meta-item strong { color: var(--primary); }
+
+        .result-item {
+            text-align: center;
+            padding: 1.75rem;
+            background: linear-gradient(135deg, rgba(0,212,170,0.06), rgba(139,92,246,0.06));
+            border-radius: 20px;
+            border: 1px solid rgba(0,212,170,0.1);
+            transition: all 0.35s ease;
+        }
+        .result-item:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(0,212,170,0.12); }
+
+        .result-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.8rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+        .result-label { color: var(--text-light); font-size: 0.95rem; }
+
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            gap: 0.5rem;
+            transition: gap 0.3s ease;
+            font-size: 1rem;
+        }
+        .card-link:hover { gap: 1rem; color: var(--primary); }
+        .card-link svg { width: 20px; height: 20px; }
+
+        /* ============================
+           TRUST BADGES
+        ============================ */
+        .badge-custom {
+            background: white;
+            padding: 2rem 2.5rem;
+            border-radius: 20px;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.07);
+            transition: all 0.35s ease;
+            border: 2px solid transparent;
+        }
+        .badge-custom:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 18px 40px rgba(0,212,170,0.15);
+            border-color: var(--primary);
+        }
+        .badge-custom img { height: 60px; }
+
+        /* ============================
+           SCROLL FADE
+        ============================ */
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+        .scroll-fade.visible { opacity: 1; transform: translateY(0); }
+
+        /* ============================
+           FOOTER — exact remembered
+        ============================ */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+            position: relative;
+        }
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        .footer-column h4 { font-size: 1.2rem; margin-bottom: 1.5rem; color: white; font-weight: 700; }
+        .footer-links { list-style: none; padding: 0; margin: 0; }
+        .footer-links li { margin-bottom: 0.8rem; }
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0;
+            width: 0; height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        .footer-links a:hover { color: white; transform: translateX(5px); }
+        .footer-links a:hover::after { width: 100%; }
+
+        .footer-bottom {
+            padding-top: 2rem; margin-top: 3rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+        }
+        .footer-social { display: flex; gap: 1rem; margin-top: 2rem; }
+        .social-icon {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-decoration: none;
+            color: white;
+        }
+        .social-icon:hover {
+            background: var(--primary);
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* ============================
+           RESPONSIVE
+        ============================ */
+        @media (max-width: 991px) {
+            .section-padding { padding: 5rem 0; }
+            .cta-banner { padding: 4.5rem 0; }
+        }
+        @media (max-width: 768px) {
+            .container-custom { padding: 0 1.25rem; }
+            .hero-section { padding-top: 90px; }
+
+            .navbar-custom .navbar-collapse {
+                background: white;
+                padding: 1rem;
+                border-radius: 10px;
+                margin-top: 1rem;
+                box-shadow: 0 10px 27px rgba(0,0,0,0.05);
+            }
+
+            .footer-column {
+                border-bottom: 1px solid rgba(255,255,255,0.1);
+                padding: 1rem 0;
+            }
+            .footer-column h4 {
+                cursor: pointer;
+                padding: 0.5rem 0;
+                margin-bottom: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                user-select: none;
+            }
+            .footer-column h4::after { content: '+'; font-size: 1.5rem; font-weight: 300; color: var(--primary); }
+            .footer-column.active h4::after { content: '−'; }
+            .footer-links { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease; }
+            .footer-column.active .footer-links { max-height: 600px; opacity: 1; padding-top: 1rem; padding-bottom: 1rem; }
+            .footer-social { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease; }
+            .footer-column.active .footer-social { max-height: 200px; opacity: 1; padding-top: 1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ══════ NAVBAR ══════ -->
+    <nav class="navbar navbar-expand-lg navbar-custom" id="mainNav">
+        <div class="container-fluid nav-container">
+            <a href="../Home.html" class="logo">DeskTime</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto gap-lg-1">
+                    <li class="nav-item"><a class="nav-link" href="../Products/features.html">Features</a></li>
+                   <li class="nav-item"><a class="nav-link" href="../Home.html#solutions">Solutions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Products/Pricingg.html">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Company/aboutus.html">About</a></li>
+                </ul>
+                <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0">
+                    <a href="../login.html" class="btn-custom btn-outline-custom">Login</a>
+                    <a href="#" class="btn-custom btn-primary-custom arrow-link">Start Free Trial <span class="arrow">→</span></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ══════ HERO ══════ -->
+    <section class="hero-section" id="features">
+        <div class="container-custom w-100" style="position:relative;z-index:2">
+            <div class="row align-items-center g-4">
+                <div class="col-lg-6 scroll-fade">
+                    <h1><span class="highlight">DeskTime Features</span><br>Your Complete Workforce Solution</h1>
+                    <p class="hero-lead">Get a clear picture of your company's performance &amp; profit blockers. Gain insights into team activity levels, trends and potential productivity issues. Get back on track with your targets.</p>
+                    <div class="row g-2 mb-4">
+                        <div class="col-md-6"><div class="hero-feature-item">Transparent time tracking</div></div>
+                        <div class="col-md-6"><div class="hero-feature-item">Streamlined work schedules</div></div>
+                        <div class="col-md-6"><div class="hero-feature-item">Automated reporting</div></div>
+                        <div class="col-md-6"><div class="hero-feature-item">Executive dashboards</div></div>
+                    </div>
+                    <div class="d-flex gap-3 flex-wrap mb-4">
+                        <a href="#demo" class="btn-custom btn-primary-custom arrow-link">Get a Demo <span class="arrow">→</span></a>
+                        <a href="#trial" class="btn-custom btn-outline-custom">Try It Free</a>
+                    </div>
+                    <div class="d-flex gap-2 flex-wrap">
+                        <div class="trust-badge">⭐ Capterra</div>
+                        <div class="trust-badge">⭐ G2</div>
+                        <div class="trust-badge">⭐ GetApp</div>
+                    </div>
+                </div>
+                <div class="col-lg-6 scroll-fade">
+                    <div class="hero-image">
+                        <img src="data:image/svg+xml,%3Csvg width='600' height='500' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='600' height='500' fill='%23e0f2fe' rx='24'/%3E%3Crect x='50' y='50' width='500' height='60' fill='%23ffffff' rx='12'/%3E%3Crect x='50' y='130' width='500' height='300' fill='%23ffffff' rx='12'/%3E%3Crect x='80' y='160' width='200' height='100' fill='%2300d4aa' opacity='0.35' rx='8'/%3E%3Crect x='300' y='160' width='200' height='100' fill='%238b5cf6' opacity='0.35' rx='8'/%3E%3Crect x='80' y='280' width='420' height='25' fill='%2300d4aa' opacity='0.25' rx='4'/%3E%3Crect x='80' y='320' width='350' height='25' fill='%238b5cf6' opacity='0.25' rx='4'/%3E%3Crect x='80' y='360' width='280' height='25' fill='%2300d4aa' opacity='0.2' rx='4'/%3E%3Crect x='80' y='400' width='400' height='20' fill='%238b5cf6' opacity='0.15' rx='4'/%3E%3C/svg%3E" alt="DeskTime Features Dashboard">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ USE CASES / TABS ══════ -->
+    <section class="section-padding" id="use-cases" style="background:var(--bg)">
+        <div class="container-custom">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-tag">Use Cases</span>
+                <h2 class="section-title">Bring your performance &amp; profits into clear focus</h2>
+            </div>
+            <div class="d-flex justify-content-center flex-wrap gap-2 mb-5 scroll-fade">
+                <div class="tab active" data-tab="workforce">Workforce Analytics</div>
+                <div class="tab" data-tab="monitoring">Employee Monitoring</div>
+                <div class="tab" data-tab="tracking">Time Tracking</div>
+                <div class="tab" data-tab="productivity">Productivity Analytics</div>
+            </div>
+
+            <div class="tab-content-custom active" id="workforce">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-6">
+                        <div class="tab-text">
+                            <h3>Workforce Analytics</h3>
+                            <h4>Monitor &amp; measure your teams' performance</h4>
+                            <p>Get instant visibility and actionable insights into your teams' performance. See who's showing up consistently and who needs coaching. Prevent burnout and reward top performers.</p>
+                            <a href="#read-more" class="btn-custom btn-primary-custom arrow-link">Read More <span class="arrow">→</span></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="tab-visual">
+                            <img src="data:image/svg+xml,%3Csvg width='600' height='450' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='600' height='450' fill='%23f0f9ff' rx='24'/%3E%3Crect x='50' y='50' width='500' height='350' fill='%23ffffff' rx='16'/%3E%3Crect x='70' y='70' width='460' height='60' fill='%2300d4aa' opacity='0.35' rx='10'/%3E%3Crect x='70' y='150' width='400' height='80' fill='%238b5cf6' opacity='0.3' rx='10'/%3E%3Crect x='70' y='250' width='380' height='80' fill='%2300d4aa' opacity='0.25' rx='10'/%3E%3Crect x='70' y='350' width='320' height='30' fill='%238b5cf6' opacity='0.2' rx='10'/%3E%3C/svg%3E" alt="Workforce Analytics">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content-custom" id="monitoring">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-6">
+                        <div class="tab-text">
+                            <h3>Employee Monitoring</h3>
+                            <h4>Build trust and accountability</h4>
+                            <p>Track activity transparently with optional screenshots, screen recordings, and activity monitoring. Build a culture of accountability while respecting privacy.</p>
+                            <a href="#read-more" class="btn-custom btn-primary-custom arrow-link">Read More <span class="arrow">→</span></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="tab-visual">
+                            <img src="data:image/svg+xml,%3Csvg width='600' height='450' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='600' height='450' fill='%23f0f9ff' rx='24'/%3E%3Crect x='50' y='50' width='500' height='350' fill='%23ffffff' rx='16'/%3E%3Crect x='70' y='70' width='210' height='150' fill='%2300d4aa' opacity='0.3' rx='12'/%3E%3Crect x='300' y='70' width='230' height='150' fill='%238b5cf6' opacity='0.3' rx='12'/%3E%3Crect x='70' y='240' width='460' height='70' fill='%2300d4aa' opacity='0.25' rx='10'/%3E%3Crect x='70' y='330' width='400' height='50' fill='%238b5cf6' opacity='0.2' rx='10'/%3E%3C/svg%3E" alt="Employee Monitoring">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content-custom" id="tracking">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-6">
+                        <div class="tab-text">
+                            <h3>Time Tracking</h3>
+                            <h4>Accurate time capture, effortlessly</h4>
+                            <p>Track every billable minute with automatic time tracking that works seamlessly in the background. Generate accurate reports for payroll, billing, and project management.</p>
+                            <a href="#read-more" class="btn-custom btn-primary-custom arrow-link">Read More <span class="arrow">→</span></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="tab-visual">
+                            <img src="data:image/svg+xml,%3Csvg width='600' height='450' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='600' height='450' fill='%23f0f9ff' rx='24'/%3E%3Crect x='50' y='50' width='500' height='350' fill='%23ffffff' rx='16'/%3E%3Crect x='100' y='100' width='110' height='250' fill='%2300d4aa' opacity='0.35' rx='10'/%3E%3Crect x='230' y='140' width='110' height='210' fill='%238b5cf6' opacity='0.35' rx='10'/%3E%3Crect x='360' y='110' width='110' height='240' fill='%2300d4aa' opacity='0.3' rx='10'/%3E%3Crect x='490' y='160' width='40' height='190' fill='%238b5cf6' opacity='0.25' rx='10'/%3E%3C/svg%3E" alt="Time Tracking">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-content-custom" id="productivity">
+                <div class="row align-items-center g-5">
+                    <div class="col-lg-6">
+                        <div class="tab-text">
+                            <h3>Productivity Analytics</h3>
+                            <h4>Data-driven performance insights</h4>
+                            <p>Understand exactly where time goes with detailed analytics. Identify bottlenecks, optimize workflows, and boost team productivity by 30% on average.</p>
+                            <a href="#read-more" class="btn-custom btn-primary-custom arrow-link">Read More <span class="arrow">→</span></a>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <div class="tab-visual">
+                            <img src="data:image/svg+xml,%3Csvg width='600' height='450' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='600' height='450' fill='%23f0f9ff' rx='24'/%3E%3Crect x='50' y='50' width='500' height='350' fill='%23ffffff' rx='16'/%3E%3Ccircle cx='170' cy='225' r='90' fill='%2300d4aa' opacity='0.35'/%3E%3Ccircle cx='300' cy='200' r='80' fill='%238b5cf6' opacity='0.3'/%3E%3Ccircle cx='430' cy='240' r='70' fill='%2300d4aa' opacity='0.25'/%3E%3Crect x='70' y='360' width='220' height='25' fill='%238b5cf6' opacity='0.25' rx='6'/%3E%3Crect x='310' y='360' width='180' height='25' fill='%2300d4aa' opacity='0.2' rx='6'/%3E%3C/svg%3E" alt="Productivity Analytics">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row g-4 mt-5">
+                <div class="col-lg-4 col-md-6"><div class="feature-item scroll-fade"><h5>Attendance Tracking</h5><p>Automate tedious tasks and ensure teams show up</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-item scroll-fade"><h5>Work Scheduling</h5><p>Set schedules and compare to actual hours</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-item scroll-fade"><h5>Payroll Reporting</h5><p>Streamline billing and improve accuracy</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-item scroll-fade"><h5>Email Notifications</h5><p>Get instant alerts on performance triggers</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-item scroll-fade"><h5>Work-Life Balance</h5><p>Prevent burnout with balance metrics</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-item scroll-fade"><h5>Real-Time Alerts</h5><p>Catch bottlenecks the second they start</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ CTA BANNER 1 ══════ -->
+    <section class="cta-banner">
+        <div class="container-custom" style="position:relative;z-index:2">
+            <div class="scroll-fade">
+                <h2>Identify resource drains</h2>
+                <p>Find the websites and apps distracting your teams. Uncover unused software licenses. Get your productivity and profits back on target.</p>
+                <a href="#demo" class="btn-custom btn-white arrow-link">Get a Demo <span class="arrow">→</span></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ TESTIMONIALS ══════ -->
+    <section class="section-padding" style="background:var(--bg-light)">
+        <div class="container-custom">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-tag">Customer Success</span>
+                <h2 class="section-title">How managers get productivity insights</h2>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="testimonial-card scroll-fade">
+                        <p class="testimonial-text">"DeskTime allowed us to identify the available time of employees, which led to substantial productivity gains across our entire organization."</p>
+                        <div class="testimonial-result"><strong>30%</strong><p>More Productive</p></div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">JB</div>
+                            <div class="author-info"><h4>Johan le Bail</h4><p>CEO, Eufonie</p></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="testimonial-card scroll-fade">
+                        <p class="testimonial-text">"As we optimize cost-efficiency, we also commit to the productivity and work-efficiency of our staff with real-time insights."</p>
+                        <div class="testimonial-result"><strong>35%</strong><p>More Efficient</p></div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">RR</div>
+                            <div class="author-info"><h4>Rommel Ragasa</h4><p>Director, Phoenix Virtual Solutions</p></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="testimonial-card scroll-fade">
+                        <p class="testimonial-text">"If you want to make more of your employee's time and take your company in the right direction, DeskTime's data makes it possible."</p>
+                        <div class="testimonial-result"><strong>10x</strong><p>Better Team Building</p></div>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">MT</div>
+                            <div class="author-info"><h4>Monica Thakwani</h4><p>Founder, Boring Commerce</p></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ INTEGRATIONS ══════ -->
+    <section class="section-padding" style="background:var(--bg)">
+        <div class="container-custom text-center">
+            <div class="scroll-fade">
+                <h2 class="section-title">Easily integrate with 60+ apps</h2>
+                <p class="section-description mb-5">Track time spent in them automatically</p>
+            </div>
+            <div class="d-flex justify-content-center align-items-center flex-wrap gap-3 mb-5 scroll-fade">
+                <div class="integration-logo"><img src="data:image/svg+xml,%3Csvg width='100' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='50' y='25' font-family='Arial' font-size='14' fill='%23666' text-anchor='middle' font-weight='bold'%3EJira%3C/text%3E%3C/svg%3E" alt="Jira"></div>
+                <div class="integration-logo"><img src="data:image/svg+xml,%3Csvg width='100' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='50' y='25' font-family='Arial' font-size='14' fill='%23666' text-anchor='middle' font-weight='bold'%3ESlack%3C/text%3E%3C/svg%3E" alt="Slack"></div>
+                <div class="integration-logo"><img src="data:image/svg+xml,%3Csvg width='100' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='50' y='25' font-family='Arial' font-size='14' fill='%23666' text-anchor='middle' font-weight='bold'%3EAsana%3C/text%3E%3C/svg%3E" alt="Asana"></div>
+                <div class="integration-logo"><img src="data:image/svg+xml,%3Csvg width='100' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='50' y='25' font-family='Arial' font-size='14' fill='%23666' text-anchor='middle' font-weight='bold'%3ETrello%3C/text%3E%3C/svg%3E" alt="Trello"></div>
+                <div class="integration-logo"><img src="data:image/svg+xml,%3Csvg width='100' height='40' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='50' y='25' font-family='Arial' font-size='14' fill='%23666' text-anchor='middle' font-weight='bold'%3EZendesk%3C/text%3E%3C/svg%3E" alt="Zendesk"></div>
+            </div>
+            <div class="scroll-fade">
+                <a href="#integrations" class="btn-custom btn-primary-custom arrow-link">View All Integrations <span class="arrow">→</span></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ FEATURES DEEP DIVE ══════ -->
+    <section class="section-padding" style="background:linear-gradient(180deg, var(--bg-light) 0%, var(--bg) 100%)">
+        <div class="container-custom">
+
+            <div class="text-center mb-5 scroll-fade">
+                <h3 class="category-title">Your productivity lens for your team</h3>
+                <p class="category-subtitle">Managers' go-to tools for 35% more efficient teams</p>
+            </div>
+            <div class="row g-4 mb-5">
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Web &amp; App Usage</h4><p>Track your teams' digital journeys. Cut out distractions and time drains.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Screenshots</h4><p>Get proof of work. Spot who needs training with optional privacy-blurred captures.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Screen Recording</h4><p>Gain insight into productivity. Stay compliant with detailed work records.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Inactivity Alerts</h4><p>Know when workers lose focus. Nudge them back on track instantly.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Desktop App</h4><p>Let teams track with an interactive app to manage time wisely.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Automatic Tracking</h4><p>Track in the background automatically. Protect performance and profits.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Executive Dashboards</h4><p>Get visibility into how teams work. Stop hours from slipping away.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Benchmarks AI</h4><p>Compare performance to AI-matched peer groups from thousands of companies.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Meeting Insights</h4><p>Uncover the true cost of meetings. Turn insights into practices that drive results.</p></div></div>
+            </div>
+
+            <div class="text-center mb-5 mt-5 pt-4 scroll-fade">
+                <h3 class="category-title">Your productivity lens for managers</h3>
+                <p class="category-subtitle">Managers' #1 platform for boosting productivity by 30%</p>
+            </div>
+            <div class="row g-4 mb-5">
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Attendance Tracking</h4><p>Automate tedious tasks. Make sure your teams are showing up.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Timeline Report</h4><p>Get an in-depth look at daily workflows. Spot and fix bottlenecks.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Project &amp; Task Management</h4><p>Keep teams on the right tasks at the right times. Stay on track.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Activity Summaries</h4><p>Get a lens into workers' daily routines. Set benchmarks and best practices.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Hours Tracked Report</h4><p>See when and where work happens. Spot efficiency gaps easily.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Custom Data Exports</h4><p>Sort and share only the data you care about for leadership.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Office vs. Remote Report</h4><p>Compare productivity across locations to shape better policies.</p></div></div>
+            </div>
+
+            <div class="text-center mb-5 mt-5 pt-4 scroll-fade">
+                <h3 class="category-title">Your profit lens for the company</h3>
+                <p class="category-subtitle">Enterprises' top solution for 6-figure cost savings</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Payroll Reporting</h4><p>Streamline billing, budgeting, and payroll. Improve accuracy.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Executive Dashboards</h4><p>Get visibility into how teams work. Stop hours from slipping.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Work-Life Balance</h4><p>Keep workloads balanced. Prevent burnout and turnover.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Web &amp; App Usage</h4><p>Track digital journeys. Cut out distractions and time drains.</p></div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade"><h4>Software Cost Insights</h4><p>Expose hidden software waste. Cut excess spend and maximize ROI.</p></div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ CASE STUDIES ══════ -->
+    <section class="section-padding" style="background:var(--bg)">
+        <div class="container-custom">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-tag">Success Stories</span>
+                <h2 class="section-title">Customer success by the numbers</h2>
+            </div>
+
+            <div class="case-study-card scroll-fade">
+                <div class="case-study-title">
+                    <h3>SmartBuyGlasses boosted productivity and payroll management with DeskTime</h3>
+                    <div class="mb-3">
+                        <span class="meta-item"><strong>Industry:</strong> Ecommerce</span>
+                        <span class="meta-item"><strong>Location:</strong> Global</span>
+                        <span class="meta-item"><strong>Team Size:</strong> 25-200 employees</span>
+                    </div>
+                </div>
+                <p style="color:var(--text-light);line-height:1.8;margin-bottom:2rem">SmartBuyGlasses required a unified system to manage their global workforce, handle work hours, improve efficiency, ensure schedule compliance, and streamline the invoicing process.</p>
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6"><div class="result-item"><span class="result-number">3x</span><span class="result-label">increase in team performance</span></div></div>
+                    <div class="col-md-6"><div class="result-item"><span class="result-number">50-75%</span><span class="result-label">decrease in compliance issues</span></div></div>
+                </div>
+                <a href="#case-study" class="card-link">Read the case study <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+            </div>
+
+            <div class="case-study-card scroll-fade">
+                <div class="case-study-title">
+                    <h3>Dentistry Support improved efficiency and quality control with DeskTime</h3>
+                    <div class="mb-3">
+                        <span class="meta-item"><strong>Industry:</strong> Outsourcing / Offshoring</span>
+                        <span class="meta-item"><strong>Location:</strong> USA</span>
+                        <span class="meta-item"><strong>Team Size:</strong> 51-100 employees</span>
+                    </div>
+                </div>
+                <p style="color:var(--text-light);line-height:1.8;margin-bottom:2rem">Dentistry Support needed robust data security and protocol adherence to safeguard patient information while ensuring efficiency, quality, and effective operations of a global team.</p>
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6"><div class="result-item"><span class="result-number">85%</span><span class="result-label">increase in employee efficiency</span></div></div>
+                    <div class="col-md-6"><div class="result-item"><span class="result-number">100%</span><span class="result-label">improved performance management</span></div></div>
+                </div>
+                <a href="#case-study" class="card-link">Read the case study <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ TRUST BADGES ══════ -->
+    <section class="section-padding" style="background:var(--bg-light)">
+        <div class="container-custom">
+            <div class="d-flex justify-content-center align-items-center flex-wrap gap-4 scroll-fade">
+                <div class="badge-custom"><img src="data:image/svg+xml,%3Csvg width='150' height='70' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='150' height='70' fill='%23e0f2fe' rx='8'/%3E%3Ctext x='75' y='40' font-family='Arial, sans-serif' font-size='16' fill='%23333' text-anchor='middle' font-weight='bold'%3ECapterra%3C/text%3E%3C/svg%3E" alt="Capterra"></div>
+                <div class="badge-custom"><img src="data:image/svg+xml,%3Csvg width='150' height='70' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='150' height='70' fill='%23fce7f3' rx='8'/%3E%3Ctext x='75' y='40' font-family='Arial, sans-serif' font-size='16' fill='%23333' text-anchor='middle' font-weight='bold'%3EG2%3C/text%3E%3C/svg%3E" alt="G2"></div>
+                <div class="badge-custom"><img src="data:image/svg+xml,%3Csvg width='150' height='70' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='150' height='70' fill='%23e0f2fe' rx='8'/%3E%3Ctext x='75' y='40' font-family='Arial, sans-serif' font-size='16' fill='%23333' text-anchor='middle' font-weight='bold'%3EGetApp%3C/text%3E%3C/svg%3E" alt="GetApp"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ CTA BANNER 2 ══════ -->
+    <section class="cta-banner">
+        <div class="container-custom" style="position:relative;z-index:2">
+            <div class="scroll-fade">
+                <h2>Why settle for a snapshot of productivity?</h2>
+                <p>Get the whole picture of your company's performance &amp; profit blockers.</p>
+                <a href="#demo" class="btn-custom btn-white arrow-link">Get a Demo <span class="arrow">→</span></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══════ FOOTER ══════ -->
+    <footer class="footer">
+        <div class="container-custom">
+            <div class="row g-5">
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Products</h4>
+                    <ul class="footer-links">
+                        <li><a href="../products/features.html">Features</a></li>
+                        <li><a href="../products/Pricingg.html">Pricing</a></li>
+                        <li><a href="#">Integrations</a></li>
+                        <li><a href="#">Get started</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Use Case</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Use Case/product-analytics.html">Productivity Analytics</a></li>
+                        <li><a href="../Use Case/Workforce-Analytics.html">Workforce Analytics</a></li>
+                        <li><a href="../Use Case/Distributed-workforce.html">Distributed Workforce</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Features</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Benchmarks AI</a></li>
+                        <li><a href="../Features/employee-monitoring.html">Employee Monitoring</a></li>
+                        <li><a href="../Features/time-tracking.html">Time Tracking</a></li>
+                        <li><a href="../Features/payroll.html">Payroll</a></li>
+                        <li><a href="../Features/TimeManagement.html">Time Management</a></li>
+                        <li><a href="../Features/Screen_Monitoring.html">Screen Monitoring</a></li>
+                        <li><a href="../Features/attendance.html">Attendance</a></li>
+                        <li><a href="../Features/Unusual_Activity_Report.html">Unusual Activity Report</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Workforce Type</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Workforce Type/remote.html">Remote</a></li>
+                        <li><a href="../Workforce Type/hybrid.html">Hybrid</a></li>
+                        <li><a href="../Workforce Type/in-office.html">In-Office</a></li>
+                        <li><a href="../Workforce Type/enterprise.html">Enterprise</a></li>
+                        <li><a href="../Workforce Type/sme-smb.html">SME &amp; SMB</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Company/aboutus.html">About us</a></li>
+                        <li><a href="../Company/careers.html">Careers</a></li>
+                        <li><a href="../Company/TermsofService.html">Terms Of Service</a></li>
+                        <li><a href="../Company/privancypolicy.html">Privacy Policy</a></li>
+                    </ul>
+                    <div class="footer-social">
+                        <a href="https://linkedin.com" target="_blank" class="social-icon" aria-label="LinkedIn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg>
+                        </a>
+                        <a href="https://facebook.com" target="_blank" class="social-icon" aria-label="Facebook">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" class="social-icon" aria-label="Instagram">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="none" stroke="currentColor" stroke-width="2"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2"/></svg>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" class="social-icon" aria-label="Twitter">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/></svg>
+                        </a>
+                        <a href="https://youtube.com" target="_blank" class="social-icon" aria-label="YouTube">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M23 9.7s-.23-1.62-.92-2.33c-.88-.92-1.86-.93-2.31-.98C16.57 6.14 12 6.14 12 6.14s-4.57 0-7.77.25c-.45.05-1.43.06-2.31.98C1.23 8.08 1 9.7 1 9.7S.77 11.55.77 13.4v1.73c0 1.85.23 3.7.23 3.7s.23 1.62.92 2.33c.88.92 2.04.89 2.56.99 1.85.18 7.52.23 7.52.23s4.58-.01 7.77-.26c.45-.05 1.43-.06 2.31-.98.69-.71.92-2.33.92-2.33s.23-1.85.23-3.7v-1.73c0-1.85-.23-3.7-.23-3.7zM9.54 15.57V9.43l6 3.07-6 3.07z"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 DeskTime. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Navbar scroll
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 50));
+
+        // Footer accordion — mobile only
+        document.querySelectorAll('.footer-column').forEach(col => {
+            col.querySelector('h4')?.addEventListener('click', () => {
+                if (window.innerWidth > 768) return;
+                col.classList.toggle('active');
+            });
+        });
+
+        // Scroll-fade IntersectionObserver with stagger
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting)
+                    setTimeout(() => entry.target.classList.add('visible'), i * 90);
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+        document.querySelectorAll('.scroll-fade').forEach(el => io.observe(el));
+
+        // Tabs
+        const tabs        = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content-custom');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const target = tab.dataset.tab;
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById(target).classList.add('active');
+            });
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const t = document.querySelector(a.getAttribute('href'));
+                if (!t) return;
+                e.preventDefault();
+                window.scrollTo({ top: t.offsetTop - 82, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>

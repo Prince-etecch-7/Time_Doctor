@@ -1,0 +1,1196 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Screen Monitoring - DeskTime Workforce Analytics</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #00d4aa;
+            --primary-dark: #00b892;
+            --dark: #1a1d29;
+            --dark-light: #2a2d3a;
+            --text: #1a1d29;
+            --text-light: #6b7280;
+            --bg: #ffffff;
+            --bg-light: #f8fafc;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-blue: #3b82f6;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background: var(--bg);
+        }
+
+        .container-custom {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+        .navbar-custom {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            z-index: 1000;
+            transition: box-shadow 0.3s ease;
+            padding: 0;
+        }
+
+        .navbar-custom.scrolled {
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 0.6s ease forwards;
+        }
+
+        @keyframes slideInLeft {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .navbar-nav .nav-link {
+            font-weight: 500;
+            color: var(--text) !important;
+            position: relative;
+            padding: 0.5rem 1.25rem;
+            transition: color 0.3s ease, transform 0.3s ease;
+        }
+
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transition: width 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: var(--primary) !important;
+            transform: translateY(-2px);
+        }
+
+        .navbar-nav .nav-link:hover::before {
+            width: 120%;
+        }
+
+        .navbar-nav .nav-link:hover::after {
+            width: 100%;
+        }
+
+        /* =====================================================
+           BUTTONS
+        ===================================================== */
+        .btn-custom {
+            padding: 0.75rem 1.75rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            text-decoration: none !important;
+            display: inline-block;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease !important;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark)) !important;
+            color: white !important;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 30px rgba(0, 212, 170, 0.5) !important;
+            background: linear-gradient(135deg, #00e0ba, #00c9a0) !important;
+        }
+
+        .btn-outline-custom {
+            background: transparent !important;
+            color: var(--text) !important;
+            border: 2px solid var(--text) !important;
+        }
+
+        .btn-outline-custom:hover {
+            background: var(--text) !important;
+            color: white !important;
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2) !important;
+        }
+
+        .btn-white-custom {
+            background: white !important;
+            color: var(--primary) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+        }
+
+        .btn-white-custom:hover {
+            transform: translateY(-3px) !important;
+            box-shadow: 0 8px 30px rgba(255, 255, 255, 0.35) !important;
+        }
+
+        .btn-outline-white-custom {
+            background: transparent !important;
+            color: white !important;
+            border: 2px solid white !important;
+        }
+
+        .btn-outline-white-custom:hover {
+            background: white !important;
+            color: var(--dark) !important;
+            transform: translateY(-3px) !important;
+        }
+
+        .arrow {
+            display: inline-block;
+            transition: transform 0.3s ease;
+        }
+
+        .arrow-link:hover .arrow {
+            transform: translateX(5px);
+        }
+
+        /* =====================================================
+           HERO
+        ===================================================== */
+        .hero-section {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            padding-top: 120px;
+            padding-bottom: 80px;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8fafc 0%, #dbeafe 50%, #e0e7ff 100%);
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(0, 212, 170, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -400px;
+            right: -200px;
+            animation: floatOrb 20s ease-in-out infinite;
+        }
+
+        @keyframes floatOrb {
+
+            0%,
+            100% {
+                transform: translate(0, 0) rotate(0deg);
+            }
+
+            33% {
+                transform: translate(30px, -30px) rotate(120deg);
+            }
+
+            66% {
+                transform: translate(-20px, 20px) rotate(240deg);
+            }
+        }
+
+        .hero-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.4rem, 4.5vw, 3.5rem);
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+        }
+
+        .highlight {
+            background: linear-gradient(135deg, var(--primary), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-dashboard {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            animation: fadeInUp 1s ease;
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .hero-dashboard:hover {
+            transform: scale(1.02) translateY(-8px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.18);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* =====================================================
+           SHARED SECTION ELEMENTS
+        ===================================================== */
+        .section-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1), rgba(139, 92, 246, 0.1));
+            color: var(--primary);
+            padding: 0.45rem 1.4rem;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            margin-bottom: 1rem;
+            letter-spacing: 0.04em;
+            transition: transform 0.3s ease;
+        }
+
+        .section-badge:hover {
+            transform: translateY(-2px);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 3.5vw, 2.8rem);
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            font-size: 1.15rem;
+            color: var(--text-light);
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        /* =====================================================
+           FEATURE CARDS
+        ===================================================== */
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 2px solid rgba(0, 0, 0, 0.05);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.07);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--primary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 28px 60px rgba(0, 212, 170, 0.2);
+            border-color: var(--accent-purple);
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 68px;
+            height: 68px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 8px 22px rgba(0, 212, 170, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-card h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 0.85rem;
+            color: var(--dark);
+        }
+
+        .feature-card p {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 0;
+        }
+
+        /* =====================================================
+           BENEFIT ITEMS
+        ===================================================== */
+        .benefit-visual {
+            background: white;
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+
+        .benefit-visual:hover {
+            transform: scale(1.02) translateY(-6px);
+            box-shadow: 0 30px 70px rgba(0, 0, 0, 0.15);
+        }
+
+        .benefit-item {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+            transition: transform 0.3s ease;
+        }
+
+        .benefit-item:hover {
+            transform: translateX(6px);
+        }
+
+        .benefit-icon-box {
+            width: 54px;
+            height: 54px;
+            min-width: 54px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-blue));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 6px 18px rgba(0, 212, 170, 0.25);
+            transition: transform 0.3s ease;
+        }
+
+        .benefit-item:hover .benefit-icon-box {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .benefit-item h3 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+            color: var(--dark);
+        }
+
+        .benefit-item p {
+            color: var(--text-light);
+            margin-bottom: 0;
+        }
+
+        /* =====================================================
+           STEP CARDS
+        ===================================================== */
+        .step-wrap {
+            text-align: center;
+            position: relative;
+        }
+
+        .step-wrap:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            top: 45px;
+            left: calc(50% + 45px);
+            width: calc(100% - 90px);
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            opacity: 0.25;
+        }
+
+        @media (max-width: 767px) {
+            .step-wrap::after {
+                display: none;
+            }
+        }
+
+        .step-number {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 900;
+            color: white;
+            margin: 0 auto 2rem;
+            box-shadow: 0 10px 30px rgba(0, 212, 170, 0.3);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .step-wrap:hover .step-number {
+            transform: scale(1.12) rotate(6deg);
+            box-shadow: 0 16px 42px rgba(0, 212, 170, 0.45);
+        }
+
+        .step-wrap h3 {
+            font-size: 1.35rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .step-wrap p {
+            color: var(--text-light);
+        }
+
+        /* =====================================================
+           CTA SECTION
+        ===================================================== */
+        .cta-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--dark), var(--dark-light));
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 212, 170, 0.2) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -300px;
+            right: -100px;
+        }
+
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -200px;
+            left: -80px;
+        }
+
+        .cta-section h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3rem);
+            font-weight: 900;
+            color: white;
+            margin-bottom: 1.5rem;
+        }
+
+        /* =====================================================
+           REMEMBERED FOOTER STYLES
+        ===================================================== */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+
+        .footer-column h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            color: white;
+            font-weight: 700;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-links a:hover::after {
+            width: 100%;
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            text-align: center;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .social-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-icon:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+            transform: translateY(-4px);
+            color: white;
+        }
+
+        /* Mobile footer accordion */
+        @media (max-width: 768px) {
+            .container-custom {
+                padding: 0 1.25rem;
+            }
+
+            .footer-column {
+                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                padding: 1rem 0;
+            }
+
+            .footer-column h4 {
+                cursor: pointer;
+                padding: 0.5rem 0;
+                margin-bottom: 0;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                user-select: none;
+            }
+
+            .footer-column h4::after {
+                content: '+';
+                font-size: 1.5rem;
+                font-weight: 300;
+                color: var(--primary);
+            }
+
+            .footer-column.active h4::after {
+                content: '−';
+            }
+
+            .footer-links {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            }
+
+            .footer-column.active .footer-links {
+                max-height: 600px;
+                opacity: 1;
+                padding-top: 1rem;
+                padding-bottom: 1rem;
+            }
+
+            .footer-social {
+                max-height: 0;
+                overflow: hidden;
+                opacity: 0;
+                transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            }
+
+            .footer-column.active .footer-social {
+                max-height: 200px;
+                opacity: 1;
+                padding-top: 1rem;
+            }
+        }
+
+        /* Scroll fade */
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(28px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+
+        .scroll-fade.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ═══════════════════════ NAVBAR ═══════════════════════ -->
+    <nav class="navbar navbar-expand-lg navbar-custom" id="mainNav">
+        <div class="container-fluid" style="max-width:1400px; padding:1rem 2rem;">
+            <a href="../Home.html" class="logo">DeskTime</a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"
+                aria-controls="navMenu" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navMenu">
+                <ul class="navbar-nav mx-auto gap-lg-1">
+                     <li class="nav-item"><a class="nav-link" href="../Products/features.html">Features</a></li>
+                   <li class="nav-item"><a class="nav-link" href="../Home.html#solutions">Solutions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Products/Pricingg.html">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="../Company/aboutus.html">About</a></li>
+                </ul>
+                <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0">
+                    <a href="../login.html" class="btn-custom btn-outline-custom">Log In</a>
+                    <a href="#" class="btn-custom btn-primary-custom arrow-link">Start Free Trial <span
+                            class="arrow">→</span></a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════ HERO ═══════════════════════ -->
+    <section class="hero-section">
+        <div class="container-custom w-100" style="position:relative; z-index:2;">
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-text scroll-fade">
+                        <h1><span class="highlight">Screen Monitoring</span><br>That Respects Privacy</h1>
+                        <p class="fs-5 mb-4" style="color:var(--text-light); max-width:540px;">
+                            Gain valuable insights into productivity patterns while maintaining employee trust.
+                            Our intelligent screen monitoring helps teams work smarter, not harder.
+                        </p>
+                        <div class="d-flex gap-3 flex-wrap">
+                            <a href="#signup" class="btn-custom btn-primary-custom arrow-link">Start Free Trial <span
+                                    class="arrow">→</span></a>
+                            <a href="#demo" class="btn-custom btn-outline-custom">Watch Demo</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-dashboard scroll-fade">
+                        <svg width="100%" viewBox="0 0 500 350" fill="none">
+                            <rect x="20" y="20" width="460" height="310" rx="10" fill="#f8fafc" />
+                            <rect x="40" y="40" width="200" height="120" rx="8" fill="white" stroke="#e0e7ff"
+                                stroke-width="2" />
+                            <rect x="260" y="40" width="200" height="120" rx="8" fill="white" stroke="#e0e7ff"
+                                stroke-width="2" />
+                            <rect x="40" y="180" width="420" height="130" rx="8" fill="white" stroke="#e0e7ff"
+                                stroke-width="2" />
+                            <text x="88" y="60" font-family="Outfit" font-size="10" fill="#6b7280">Productivity
+                                Score</text>
+                            <text x="308" y="60" font-family="Outfit" font-size="10" fill="#6b7280">Focus Time</text>
+                            <circle cx="150" cy="95" r="36" stroke="#e0e7ff" stroke-width="7" fill="none" />
+                            <circle cx="150" cy="95" r="36" stroke="#00d4aa" stroke-width="7" fill="none"
+                                stroke-dasharray="175 226" stroke-linecap="round" transform="rotate(-90 150 95)" />
+                            <text x="138" y="100" font-family="Outfit" font-size="13" font-weight="700"
+                                fill="#1a1d29">87%</text>
+                            <circle cx="370" cy="95" r="36" stroke="#e0e7ff" stroke-width="7" fill="none" />
+                            <circle cx="370" cy="95" r="36" stroke="#3b82f6" stroke-width="7" fill="none"
+                                stroke-dasharray="142 226" stroke-linecap="round" transform="rotate(-90 370 95)" />
+                            <text x="358" y="100" font-family="Outfit" font-size="13" font-weight="700"
+                                fill="#1a1d29">63%</text>
+                            <rect x="60" y="200" width="16" height="80" rx="4" fill="#00d4aa" opacity="0.85" />
+                            <rect x="92" y="220" width="16" height="60" rx="4" fill="#3b82f6" opacity="0.75" />
+                            <rect x="124" y="208" width="16" height="72" rx="4" fill="#8b5cf6" opacity="0.85" />
+                            <rect x="156" y="228" width="16" height="52" rx="4" fill="#00d4aa" opacity="0.60" />
+                            <rect x="188" y="213" width="16" height="67" rx="4" fill="#3b82f6" opacity="0.85" />
+                            <rect x="220" y="203" width="16" height="77" rx="4" fill="#ec4899" opacity="0.70" />
+                            <rect x="252" y="223" width="16" height="57" rx="4" fill="#8b5cf6" opacity="0.65" />
+                            <rect x="284" y="210" width="16" height="70" rx="4" fill="#00d4aa" opacity="0.75" />
+                            <rect x="316" y="230" width="16" height="50" rx="4" fill="#3b82f6" opacity="0.65" />
+                            <text x="58" y="305" font-family="Outfit" font-size="10" fill="#6b7280">9 AM</text>
+                            <text x="130" y="305" font-family="Outfit" font-size="10" fill="#6b7280">11 AM</text>
+                            <text x="202" y="305" font-family="Outfit" font-size="10" fill="#6b7280">1 PM</text>
+                            <text x="274" y="305" font-family="Outfit" font-size="10" fill="#6b7280">3 PM</text>
+                            <text x="346" y="305" font-family="Outfit" font-size="10" fill="#6b7280">5 PM</text>
+                        </svg>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════ FEATURES ═══════════════════════ -->
+    <section id="features" style="background:var(--bg); padding: 6rem 0;">
+        <div class="container-custom">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-badge">KEY FEATURES</span>
+                <h2 class="section-title">Smart Monitoring, Ethical Tracking</h2>
+                <p class="section-subtitle">Our screen monitoring solution balances productivity insights with employee
+                    privacy, helping you build a culture of trust and transparency.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">
+                            <svg width="30" height="30" fill="none" stroke="white" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path
+                                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                        </div>
+                        <h3>Activity Tracking</h3>
+                        <p>Automatically categorize applications and websites as productive, unproductive, or neutral.
+                            Get real-time insights without invasive monitoring.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">
+                            <svg width="30" height="30" fill="none" stroke="white" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path
+                                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                        </div>
+                        <h3>Screenshot Capture</h3>
+                        <p>Optional screenshot functionality with customizable intervals and blur settings. Employees
+                            control when screenshots can be taken.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">
+                            <svg width="30" height="30" fill="none" stroke="white" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                            </svg>
+                        </div>
+                        <h3>Privacy First</h3>
+                        <p>Built-in privacy controls allow employees to pause monitoring during breaks or personal
+                            tasks. Full transparency and consent.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">
+                            <svg width="30" height="30" fill="none" stroke="white" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path
+                                    d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                            </svg>
+                        </div>
+                        <h3>Productivity Analytics</h3>
+                        <p>Visualize productivity trends over time with detailed reports and dashboards. Identify
+                            patterns to optimize workflows.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">
+                            <svg width="30" height="30" fill="none" stroke="white" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            </svg>
+                        </div>
+                        <h3>Time Analysis</h3>
+                        <p>Track time spent on different applications, projects, and tasks. Automatically generate
+                            timesheets and billable hours reports.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card scroll-fade">
+                        <div class="feature-icon">
+                            <svg width="30" height="30" fill="none" stroke="white" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <path
+                                    d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                                <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                        </div>
+                        <h3>Customizable Rules</h3>
+                        <p>Set up custom productivity rules based on your team's workflow. Flexible settings adapt to
+                            different roles and departments.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════ BENEFITS ═══════════════════════ -->
+    <section id="benefits" style="background:var(--bg-light); padding: 6rem 0;">
+        <div class="container-custom">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-badge">BENEFITS</span>
+                <h2 class="section-title">Transform Your Workplace</h2>
+                <p class="section-subtitle">Screen monitoring that empowers teams and managers with actionable insights
+                    while respecting individual privacy and autonomy.</p>
+            </div>
+            <div class="row g-5 align-items-center">
+                <div class="col-lg-6">
+                    <div class="benefit-visual scroll-fade">
+                        <svg width="100%" viewBox="0 0 400 300" fill="none">
+                            <rect x="50" y="50" width="300" height="200" rx="10" fill="#f8fafc" stroke="#e0e7ff"
+                                stroke-width="2" />
+                            <circle cx="200" cy="150" r="62" fill="#00d4aa" opacity="0.12" />
+                            <circle cx="200" cy="150" r="42" fill="#00d4aa" opacity="0.10" />
+                            <path d="M178 150 L194 166 L222 133" stroke="#00d4aa" stroke-width="4.5"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                            <rect x="78" y="68" width="124" height="9" rx="4.5" fill="#e0e7ff" />
+                            <rect x="78" y="68" width="92" height="9" rx="4.5" fill="#00d4aa" />
+                            <rect x="78" y="88" width="124" height="9" rx="4.5" fill="#e0e7ff" />
+                            <rect x="78" y="88" width="107" height="9" rx="4.5" fill="#3b82f6" />
+                            <rect x="78" y="218" width="104" height="9" rx="4.5" fill="#e0e7ff" />
+                            <rect x="78" y="218" width="72" height="9" rx="4.5" fill="#8b5cf6" />
+                            <rect x="78" y="238" width="104" height="9" rx="4.5" fill="#e0e7ff" />
+                            <rect x="78" y="238" width="88" height="9" rx="4.5" fill="#00d4aa" />
+                            <circle cx="325" cy="78" r="6" fill="#ec4899" opacity="0.55" />
+                            <circle cx="346" cy="100" r="4" fill="#8b5cf6" opacity="0.55" />
+                            <circle cx="315" cy="220" r="6" fill="#00d4aa" opacity="0.55" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="d-flex flex-column gap-4">
+                        <div class="benefit-item scroll-fade">
+                            <div class="benefit-icon-box">
+                                <svg width="24" height="24" fill="none" stroke="white" stroke-width="2.2"
+                                    stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                    <path d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3>Boost Productivity by 32%</h3>
+                                <p>Teams using DeskTime screen monitoring report an average 32% increase in productivity
+                                    through better focus and workflow optimization.</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item scroll-fade">
+                            <div class="benefit-icon-box">
+                                <svg width="24" height="24" fill="none" stroke="white" stroke-width="2.2"
+                                    stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                    <path
+                                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3>Build Team Trust</h3>
+                                <p>Transparent monitoring with employee controls creates trust and accountability,
+                                    leading to better team morale and retention.</p>
+                            </div>
+                        </div>
+                        <div class="benefit-item scroll-fade">
+                            <div class="benefit-icon-box">
+                                <svg width="24" height="24" fill="none" stroke="white" stroke-width="2.2"
+                                    stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                    <path
+                                        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3>Data-Driven Decisions</h3>
+                                <p>Make informed decisions about resource allocation, project timelines, and team
+                                    structure based on real productivity data.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════ HOW IT WORKS ═══════════════════════ -->
+    <section id="how-it-works" style="background:var(--bg); padding: 6rem 0;">
+        <div class="container-custom">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-badge">HOW IT WORKS</span>
+                <h2 class="section-title">Get Started in Minutes</h2>
+                <p class="section-subtitle">Setting up screen monitoring is quick and easy. Our lightweight desktop app
+                    runs seamlessly in the background without impacting performance.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="step-wrap scroll-fade">
+                        <div class="step-number">1</div>
+                        <h3>Download & Install</h3>
+                        <p>Download our lightweight desktop application for Windows, Mac, or Linux. Installation takes
+                            less than 2 minutes.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="step-wrap scroll-fade">
+                        <div class="step-number">2</div>
+                        <h3>Configure Settings</h3>
+                        <p>Set up productivity categories, screenshot intervals, and privacy settings. Customize rules
+                            for different teams or projects.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="step-wrap scroll-fade">
+                        <div class="step-number">3</div>
+                        <h3>Track & Optimize</h3>
+                        <p>View real-time dashboards and detailed reports. Use insights to optimize workflows, improve
+                            focus time, and boost team performance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════ CTA ═══════════════════════ -->
+    <section class="cta-section">
+        <div class="container-custom text-center" style="position:relative; z-index:2;">
+            <div class="scroll-fade">
+                <h2>Ready to Transform Your Productivity?</h2>
+                <p class="fs-5 mb-4 mx-auto" style="color:rgba(255,255,255,0.8); max-width:600px;">
+                    Join thousands of teams using DeskTime screen monitoring to work smarter.
+                    Start your free 14-day trial today—no credit card required.
+                </p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="#signup" class="btn-custom btn-white-custom arrow-link">Start Free Trial <span
+                            class="arrow">→</span></a>
+                    <a href="#demo" class="btn-custom btn-outline-white-custom">Schedule a Demo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════════ REMEMBERED FOOTER ═══════════════════════ -->
+    <footer class="footer">
+        <div class="container-custom">
+            <div class="row g-5">
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Products</h4>
+                    <ul class="footer-links">
+                        <li><a href="../products/features.html">Features</a></li>
+                        <li><a href="../products/Pricingg.html">Pricing</a></li>
+                        <li><a href="#">Integrations</a></li>
+                        <li><a href="#">Get started</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Use Case</h4>
+                    <ul class="footer-links">
+                        <li><a href="../Use Case/product-analytics.html">Productivity Analytics</a></li>
+                        <li><a href="../Use Case/Workforce-Analytics.html">Workforce Analytics</a></li>
+                        <li><a href="../Use Case/Distributed-workforce.html">Distributed Workforce</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Features</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Benchmarks AI</a></li>
+                        <li><a href="../Features/employee-monitoring.html">Employee Monitoring</a></li>
+                        <li><a href="../Features/time-tracking.html">Time Tracking</a></li>
+                        <li><a href="../Features/payroll.html">Payroll</a></li>
+                        <li><a href="../Features/TimeManagement.html">Time Management</a></li>
+                        <li><a href="../Features/Screen_Monitoring.html">Screen Monitoring</a></li>
+                        <li><a href="../Features/attendance.html">Attendance</a></li>
+                        <li><a href="../Features/Unusual_Activity_Report.html">Unusual Activity Report</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Workforce Type</h4>
+                    <ul class="footer-links">
+                      <li><a href="../Workforce Type/remote.html">Remote</a></li>
+                        <li><a href="../Workforce Type/hybrid.html">Hybrid</a></li>
+                        <li><a href="../Workforce Type/in-office.html">In-Office</a></li>
+                        <li><a href="../Workforce Type/enterprise.html">Enterprise</a></li>
+                        <li><a href="../Workforce Type/sme-smb.html">SME &amp; SMB</a></li>
+                    </ul>
+                </div>
+
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                       <li><a href="../Company/aboutus.html">About us</a></li>
+                        <li><a href="../Company/careers.html">Careers</a></li>
+                        <li><a href="../Company/TermsofService.html">Terms Of Service</a></li>
+                        <li><a href="../Company/privancypolicy.html">Privacy Policy</a></li>
+                    </ul>
+                    <div class="footer-social">
+                        <a href="https://linkedin.com" target="_blank" class="social-icon" aria-label="LinkedIn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z" />
+                                <circle cx="4" cy="4" r="2" />
+                            </svg>
+                        </a>
+                        <a href="https://facebook.com" target="_blank" class="social-icon" aria-label="Facebook">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
+                            </svg>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" class="social-icon" aria-label="Instagram">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                                <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="none" stroke="currentColor"
+                                    stroke-width="2" />
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2" />
+                            </svg>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" class="social-icon" aria-label="Twitter">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z" />
+                            </svg>
+                        </a>
+                        <a href="https://youtube.com" target="_blank" class="social-icon" aria-label="YouTube">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M23 9.7s-.23-1.62-.92-2.33c-.88-.92-1.86-.93-2.31-.98C16.57 6.14 12 6.14 12 6.14s-4.57 0-7.77.25c-.45.05-1.43.06-2.31.98C1.23 8.08 1 9.7 1 9.7S.77 11.55.77 13.4v1.73c0 1.85.23 3.7.23 3.7s.23 1.62.92 2.33c.88.92 2.04.89 2.56.99 1.85.18 7.52.23 7.52.23s4.58-.01 7.77-.26c.45-.05 1.43-.06 2.31-.98.69-.71.92-2.33.92-2.33s.23-1.85.23-3.7v-1.73c0-1.85-.23-3.7-.23-3.7zM9.54 15.57V9.43l6 3.07-6 3.07z" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2026 DeskTime. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        /* Navbar scroll */
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => nav.classList.toggle('scrolled', scrollY > 50));
+
+        /* Mobile footer accordion */
+        document.querySelectorAll('.footer-column').forEach(col => {
+            col.querySelector('h4')?.addEventListener('click', () => {
+                if (window.innerWidth > 768) return;
+                col.classList.toggle('active');
+            });
+        });
+
+        /* Scroll-fade with stagger */
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 90);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.scroll-fade').forEach(el => io.observe(el));
+
+        /* Smooth scroll */
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const t = document.querySelector(a.getAttribute('href'));
+                if (!t) return;
+                e.preventDefault();
+                window.scrollTo({ top: t.offsetTop - 82, behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,1180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeskTime - </title>
+
+     <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+   
+   <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary:       #00d4aa;
+            --primary-dark:  #00b892;
+            --secondary:     #ff6b6b;
+            --dark:          #1a1d29;
+            --dark-light:    #2a2d3a;
+            --text:          #1a1d29;
+            --text-light:    #6b7280;
+            --bg:            #ffffff;
+            --bg-light:      #f8fafc;
+            --accent-purple: #8b5cf6;
+            --accent-blue:   #3b82f6;
+            --accent-pink:   #ec4899;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background: var(--bg);
+        }
+
+        /* ════════════════════════════════════════════
+           LOADING SCREEN
+           Matches hero gradient | Playfair logo |
+           teal→purple→blue bar | pulsing dots
+           Dismissed after 2.6s via JS
+        ════════════════════════════════════════════ */
+        #loadingScreen {
+            position: fixed; inset: 0; z-index: 99999;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #fce7f3 100%);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 1.8rem;
+            transition: opacity 0.7s ease, visibility 0.7s ease;
+        }
+        #loadingScreen.hide { opacity: 0; visibility: hidden; pointer-events: none; }
+
+        .ld-orb-1 {
+            position: absolute; width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(0,212,170,0.12) 0%, transparent 70%);
+            border-radius: 50%; top: -300px; right: -200px;
+            animation: ldOrb1 8s ease-in-out infinite; pointer-events: none;
+        }
+        .ld-orb-2 {
+            position: absolute; width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(139,92,246,0.09) 0%, transparent 70%);
+            border-radius: 50%; bottom: -200px; left: -100px;
+            animation: ldOrb2 10s ease-in-out infinite; pointer-events: none;
+        }
+        @keyframes ldOrb1 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(40px,-30px)} }
+        @keyframes ldOrb2 { 0%,100%{transform:translate(0,0)} 50%{transform:translate(-30px,40px)} }
+
+        .ld-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 10vw, 5rem); font-weight: 900;
+            background: linear-gradient(135deg, #00d4aa 0%, #8b5cf6 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            letter-spacing: -2px; position: relative; z-index: 1;
+            animation: ldLogoEntry 0.8s cubic-bezier(0.22,1,0.36,1) both;
+        }
+        @keyframes ldLogoEntry {
+            from { opacity: 0; transform: translateY(28px) scale(0.92); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .ld-tagline {
+            font-family: 'Outfit', sans-serif; margin: 0;
+            font-size: 0.88rem; color: #6b7280;
+            letter-spacing: 3px; text-transform: uppercase; font-weight: 600;
+            position: relative; z-index: 1;
+            animation: ldFadeUp 0.8s 0.3s ease-out both;
+        }
+        .ld-bar-track {
+            width: clamp(200px, 30vw, 320px); height: 3px;
+            background: rgba(0,0,0,0.08); border-radius: 99px; overflow: hidden;
+            position: relative; z-index: 1;
+            animation: ldFadeUp 0.8s 0.5s ease-out both;
+        }
+        .ld-bar-fill {
+            height: 100%; border-radius: 99px; width: 0%;
+            background: linear-gradient(90deg, #00d4aa, #8b5cf6, #3b82f6);
+            background-size: 200% 100%;
+            animation: ldBarFill 2.4s cubic-bezier(0.4,0,0.2,1) forwards,
+                       ldBarShimmer 1.2s linear infinite;
+        }
+        @keyframes ldBarFill    { 0%{width:0%} 60%{width:75%} 85%{width:90%} 100%{width:100%} }
+        @keyframes ldBarShimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+        .ld-dots { display:flex; gap:0.5rem; position:relative; z-index:1; animation:ldFadeUp 0.8s 0.6s ease-out both; }
+        .ld-dots span { width:7px; height:7px; border-radius:50%; display:inline-block; animation:ldDot 1.4s ease-in-out infinite; }
+        .ld-dots span:nth-child(1) { background:#00d4aa; }
+        .ld-dots span:nth-child(2) { background:#8b5cf6; animation-delay:0.2s; }
+        .ld-dots span:nth-child(3) { background:#3b82f6; animation-delay:0.4s; }
+        @keyframes ldDot    { 0%,80%,100%{transform:scale(0.7);opacity:0.4} 40%{transform:scale(1.2);opacity:1} }
+        @keyframes ldFadeUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
+
+        /* ════════════════════════════════════════════
+           CONTAINER
+        ════════════════════════════════════════════ */
+        .container-custom {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* ════════════════════════════════════════════
+           NAVBAR
+        ════════════════════════════════════════════ */
+        .navbar-custom {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            padding: 0;
+        }
+        .navbar-custom.scrolled { box-shadow: 0 4px 30px rgba(0, 0, 0, 0.08); }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.8rem;
+            font-weight: 900;
+            text-decoration: none;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            z-index: 1002;
+            position: relative;
+            opacity: 0;
+            transform: translateX(-30px);
+            animation: slideInLeft 0.6s ease forwards;
+        }
+
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-30px); }
+            to   { opacity: 1; transform: translateX(0);     }
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--text);
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.25rem;
+        }
+        .navbar-nav .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 100%;
+            background: linear-gradient(135deg, rgba(0,212,170,0.1) 0%, rgba(139,92,246,0.1) 100%);
+            border-radius: 8px;
+            transition: width 0.3s ease;
+            z-index: -1;
+        }
+        .navbar-nav .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 50%;
+            transform: translateX(-50%);
+            width: 0; height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transition: width 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        .navbar-nav .nav-link:hover             { color: var(--primary); transform: translateY(-2px); }
+        .navbar-nav .nav-link:hover::before     { width: 120%; }
+        .navbar-nav .nav-link:hover::after      { width: 100%; }
+
+        /* ════════════════════════════════════════════
+           BUTTONS
+        ════════════════════════════════════════════ */
+        .btn-custom {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            cursor: pointer;
+            border: none;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+        }
+        .btn-custom::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s ease, height 0.6s ease;
+        }
+        .btn-custom:hover::before { width: 300px; height: 300px; }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            box-shadow: 0 4px 15px rgba(0, 212, 170, 0.3);
+        }
+        .btn-primary-custom:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 30px rgba(0, 212, 170, 0.5);
+            color: white;
+        }
+        .btn-outline-custom {
+            background: transparent;
+            color: var(--text);
+            border: 2px solid var(--text);
+        }
+        .btn-outline-custom:hover {
+            background: var(--text);
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        .btn-white-custom {
+            background: white;
+            color: var(--primary);
+            font-weight: 700;
+            box-shadow: 0 4px 20px rgba(255, 255, 255, 0.25);
+        }
+        .btn-white-custom:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 10px 35px rgba(255, 255, 255, 0.4);
+            color: var(--primary);
+        }
+        .btn-outline-white-custom {
+            background: transparent;
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.7);
+            font-weight: 600;
+        }
+        .btn-outline-white-custom:hover {
+            border-color: white;
+            color: white;
+            transform: translateY(-3px) scale(1.05);
+        }
+        .arrow { display: inline-block; transition: transform 0.3s ease; }
+        .arrow-link:hover .arrow { transform: translateX(5px); }
+
+        /* ════════════════════════════════════════════
+           SECTION HELPERS
+        ════════════════════════════════════════════ */
+        .section-padding { padding: 8rem 0; }
+
+        .section-tag {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(139,92,246,0.1));
+            color: var(--primary);
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: transform 0.3s ease;
+        }
+        .section-tag:hover { transform: translateY(-2px); }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        .section-description {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            max-width: 720px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* ════════════════════════════════════════════
+           HERO SECTION
+        ════════════════════════════════════════════ */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding-top: 110px;
+            padding-bottom: 5rem;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #fce7f3 100%);
+        }
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            width: 900px; height: 900px;
+            background: radial-gradient(circle, rgba(0,212,170,0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -450px; right: -300px;
+            animation: floatOrb 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+        .hero-section::after {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(139,92,246,0.07) 0%, transparent 70%);
+            border-radius: 50%;
+            bottom: -200px; left: -100px;
+            animation: floatOrb 28s ease-in-out infinite reverse;
+            pointer-events: none;
+        }
+        @keyframes floatOrb {
+            0%, 100% { transform: translate(0,0) rotate(0deg); }
+            33%       { transform: translate(30px,-30px) rotate(120deg); }
+            66%       { transform: translate(-20px,20px) rotate(240deg); }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+
+        .hero-text h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            animation: fadeInUp 0.8s ease-out;
+        }
+        .hero-text .highlight {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .hero-text p {
+            font-size: clamp(1.1rem, 2vw, 1.3rem);
+            color: var(--text-light);
+            margin-bottom: 2rem;
+            line-height: 1.8;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        .hero-stats {
+            margin-top: 3rem;
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+        .stat { text-align: center; }
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            line-height: 1;
+            margin-bottom: 0.4rem;
+        }
+        .stat-label { font-size: 0.9rem; color: var(--text-light); margin-top: 0.5rem; }
+
+        .hero-image {
+            position: relative;
+            animation: fadeInRight 1s ease-out;
+        }
+        .hero-image-card {
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 30px 70px rgba(0,0,0,0.14);
+            transition: transform 0.5s ease, box-shadow 0.5s ease;
+        }
+        .hero-image-card:hover {
+            transform: scale(1.02) translateY(-8px);
+            box-shadow: 0 40px 90px rgba(0,0,0,0.18);
+        }
+        .hero-image-card img { width: 100%; display: block; }
+
+        .floating-card {
+            position: absolute;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            animation: floatCard 3s ease-in-out infinite;
+            z-index: 10;
+            min-width: 140px;
+        }
+        .card-1 { top: 10%; left: -10%; animation-delay: 0s; }
+        .card-2 { bottom: 15%; right: -10%; animation-delay: 1s; }
+        @keyframes floatCard {
+            0%, 100% { transform: translateY(0); }
+            50%       { transform: translateY(-20px); }
+        }
+
+        /* ════════════════════════════════════════════
+           FEATURE CARDS
+        ════════════════════════════════════════════ */
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 2px solid rgba(0,0,0,0.04);
+            transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            box-shadow: 0 6px 24px rgba(0,0,0,0.05);
+        }
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,212,170,0.18);
+            border-color: var(--primary);
+        }
+        .feature-card:hover::before { transform: scaleX(1); }
+        .feature-icon {
+            width: 70px; height: 70px;
+            background: linear-gradient(135deg, rgba(0,212,170,0.1), rgba(139,92,246,0.1));
+            border-radius: 20px;
+            display: flex; align-items: center; justify-content: center;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            transition: all 0.35s ease;
+        }
+        .feature-card:hover .feature-icon {
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            transform: scale(1.1) rotate(5deg);
+        }
+        .feature-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+        .feature-card p { color: var(--text-light); line-height: 1.8; margin-bottom: 0; }
+
+        /* ════════════════════════════════════════════
+           SOLUTIONS CARDS
+        ════════════════════════════════════════════ */
+        .solutions-card {
+            background: white;
+            border-radius: 24px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+            border: 2px solid transparent;
+            height: 100%;
+        }
+        .solutions-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            z-index: 0;
+        }
+        .solutions-card::after {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+            z-index: 1;
+        }
+        .solutions-card:hover::before { opacity: 0.05; }
+        .solutions-card:hover::after  { transform: scaleX(1); }
+        .solutions-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0,212,170,0.18);
+            border-color: var(--primary);
+        }
+        .solutions-card > * { position: relative; z-index: 1; }
+        .solutions-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: var(--dark);
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+        .solutions-card:hover h3 { color: var(--primary); }
+        .solutions-card p { color: var(--text-light); margin-bottom: 1.5rem; line-height: 1.7; }
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            gap: 0.5rem;
+            transition: gap 0.3s ease;
+            font-size: 1rem;
+        }
+        .card-link:hover { gap: 1rem; color: var(--primary); }
+        .card-link svg { width: 20px; height: 20px; transition: transform 0.3s ease; }
+        .card-link:hover svg { transform: translateX(4px); }
+
+        /* ════════════════════════════════════════════
+           TESTIMONIALS
+        ════════════════════════════════════════════ */
+        .testimonials-section {
+            padding: 8rem 0;
+            background: var(--dark);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .testimonials-section::before {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(0,212,170,0.09) 0%, transparent 70%);
+            border-radius: 50%;
+            top: -280px; left: -150px;
+            pointer-events: none;
+        }
+        .testimonials-section::after {
+            content: '';
+            position: absolute;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(139,92,246,0.07), transparent 70%);
+            border-radius: 50%;
+            bottom: -150px; right: -100px;
+            pointer-events: none;
+        }
+        .testimonials-section .section-tag { background: rgba(0,212,170,0.2); }
+        .testimonials-section .section-title       { color: white; }
+        .testimonials-section .section-description { color: rgba(255,255,255,0.75); }
+
+        .testimonial-card {
+            background: var(--dark-light);
+            padding: 2.5rem;
+            border-radius: 24px;
+            border: 2px solid rgba(255,255,255,0.07);
+            transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+        .testimonial-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent-purple));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+        .testimonial-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255,255,255,0.05);
+            border-color: var(--primary);
+            box-shadow: 0 20px 50px rgba(0,212,170,0.12);
+        }
+        .testimonial-card:hover::before { transform: scaleX(1); }
+        .testimonial-stars { color: #fbbf24; font-size: 1.2rem; margin-bottom: 1rem; }
+        .testimonial-text {
+            color: rgba(255,255,255,0.9);
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-style: italic;
+        }
+        .testimonial-author { display: flex; align-items: center; gap: 1rem; }
+        .author-avatar {
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; font-size: 1.1rem; color: white;
+            flex-shrink: 0;
+            box-shadow: 0 4px 14px rgba(0,212,170,0.3);
+            transition: transform 0.3s ease;
+        }
+        .testimonial-card:hover .author-avatar { transform: scale(1.1) rotate(5deg); }
+        .author-info h4 { font-weight: 700; font-size: 1rem; margin-bottom: 0.2rem; color: white; }
+        .author-info p  { color: rgba(255,255,255,0.55); font-size: 0.9rem; margin-bottom: 0; }
+
+        /* ════════════════════════════════════════════
+           CTA SECTION
+        ════════════════════════════════════════════ */
+        .cta-section {
+            padding: 8rem 0;
+            background: linear-gradient(135deg, var(--primary), var(--accent-purple));
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            width: 100%; height: 100%;
+            top: 0; left: 0;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+        .cta-section::after {
+            content: '';
+            position: absolute;
+            width: 600px; height: 600px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 50%;
+            top: -350px; right: -200px;
+            pointer-events: none;
+        }
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .cta-content h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 900;
+            margin-bottom: 1.5rem;
+            line-height: 1.2;
+        }
+        .cta-content p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.95;
+            line-height: 1.8;
+        }
+
+        /* ════════════════════════════════════════════
+           SCROLL FADE
+        ════════════════════════════════════════════ */
+        .scroll-fade {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.65s ease, transform 0.65s ease;
+        }
+        .scroll-fade.visible { opacity: 1; transform: translateY(0); }
+
+        /* ════════════════════════════════════════════
+           FOOTER
+        ════════════════════════════════════════════ */
+        .footer {
+            background: var(--dark);
+            color: white;
+            padding: 4rem 0 2rem;
+            position: relative;
+        }
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        .footer-column h4 { font-size: 1.2rem; margin-bottom: 1.5rem; color: white; font-weight: 700; }
+        .footer-links { list-style: none; padding: 0; margin: 0; }
+        .footer-links li { margin-bottom: 0.8rem; }
+        .footer-links a {
+            color: rgba(255,255,255,0.7);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-block;
+            position: relative;
+        }
+        .footer-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -2px; left: 0;
+            width: 0; height: 2px;
+            background: var(--primary);
+            transition: width 0.3s ease;
+        }
+        .footer-links a:hover          { color: white; transform: translateX(5px); }
+        .footer-links a:hover::after   { width: 100%; }
+        .footer-bottom {
+            padding-top: 2rem;
+            margin-top: 3rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+        }
+        .footer-social { display: flex; gap: 1rem; margin-top: 2rem; }
+        .social-icon {
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.1);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            text-decoration: none;
+            color: white;
+        }
+        .social-icon:hover {
+            background: var(--primary);
+            transform: translateY(-4px);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        /* ════════════════════════════════════════════
+           RESPONSIVE
+        ════════════════════════════════════════════ */
+        @media (max-width: 991px) {
+            .section-padding { padding: 5rem 0; }
+            .testimonials-section, .cta-section { padding: 5rem 0; }
+        }
+        @media (max-width: 768px) {
+            .container-custom  { padding: 0 1.25rem; }
+            .hero-section { padding-top: 90px; min-height: auto; padding-bottom: 3rem; }
+            .floating-card { display: none; }
+            .navbar-custom .navbar-collapse {
+                background: white; padding: 1rem; border-radius: 10px;
+                margin-top: 1rem; box-shadow: 0 10px 27px rgba(0,0,0,0.05);
+            }
+            .footer-column { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 1rem 0; }
+            .footer-column h4 {
+                cursor: pointer; padding: 0.5rem 0; margin-bottom: 0;
+                display: flex; justify-content: space-between; align-items: center; user-select: none;
+            }
+            .footer-column h4::after { content: '+'; font-size: 1.5rem; font-weight: 300; color: var(--primary); }
+            .footer-column.active h4::after { content: '−'; }
+            .footer-links {
+                max-height: 0; overflow: hidden; opacity: 0;
+                transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease;
+            }
+            .footer-column.active .footer-links { max-height: 600px; opacity: 1; padding-top: 1rem; padding-bottom: 1rem; }
+            .footer-social { max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s ease, opacity 0.3s ease, padding 0.3s ease; }
+            .footer-column.active .footer-social { max-height: 200px; opacity: 1; padding-top: 1rem; }
+            .ld-logo { font-size: 3rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════════════════════════════════════
+         LOADING SCREEN
+         Dismissed after 2.6s via window.load + setTimeout
+    ═══════════════════════════════════════════ -->
+    <div id="loadingScreen">
+        <div class="ld-orb-1"></div>
+        <div class="ld-orb-2"></div>
+        <div class="ld-logo">DeskTime</div>
+        <p class="ld-tagline">Workforce Analytics</p>
+        <div class="ld-bar-track"><div class="ld-bar-fill"></div></div>
+        <div class="ld-dots"><span></span><span></span><span></span></div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar navbar-expand-lg navbar-custom" id="mainNav">
+        <div class="container-fluid nav-container">
+            <a href="./Home.html" class="logo">DeskTime</a>
+            <button class="navbar-toggler border-0" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto gap-lg-1">
+                    <li class="nav-item"><a class="nav-link" href="#features">Features</a></li>
+                    <li class="nav-item"><a class="nav-link" href="#solutions">Solutions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./Products/Pricingg.html">Pricing</a></li>
+                    <li class="nav-item"><a class="nav-link" href="./Company/aboutus.html">About</a></li>
+                </ul>
+                <div class="d-flex flex-column flex-lg-row gap-2 mt-3 mt-lg-0">
+                    <a href="./login.html" class="btn-custom btn-outline-custom">Login</a>
+                    <a href="signup.html" class="btn-custom btn-primary-custom arrow-link">
+                        Start Free Trial <span class="arrow">→</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero-section">
+        <div class="container-custom w-100" style="position:relative;z-index:2">
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <div class="hero-text">
+                        <h1>
+                            <span class="highlight">Workforce Analytics</span>
+                            for Distributed Teams
+                        </h1>
+                        <p>Empower your remote, hybrid, and in-office teams with intelligent time tracking,
+                            productivity insights, and workforce analytics that drive real results.</p>
+                        <div class="hero-buttons">
+                            <a href="signup.html" class="btn-custom btn-primary-custom arrow-link">
+                                Start Free Trial <span class="arrow">→</span>
+                            </a>
+                            <a href="signup.html" class="btn-custom btn-outline-custom">Watch Demo</a>
+                        </div>
+                        <div class="hero-stats">
+                            <div class="row g-4">
+                                <div class="col-4"><div class="stat">
+                                    <span class="stat-number">500K+</span>
+                                    <span class="stat-label">Active Users</span>
+                                </div></div>
+                                <div class="col-4"><div class="stat">
+                                    <span class="stat-number">180+</span>
+                                    <span class="stat-label">Countries</span>
+                                </div></div>
+                                <div class="col-4"><div class="stat">
+                                    <span class="stat-number">4.8★</span>
+                                    <span class="stat-label">User Rating</span>
+                                </div></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image">
+                        <div class="hero-image-card">
+                            <img src="data:image/svg+xml,%3Csvg width='600' height='500' xmlns='http://www.w3.org/2000/svg'%3E%3Crect width='600' height='500' fill='%23e0f2fe' rx='24'/%3E%3Crect x='50' y='50' width='500' height='60' fill='%23ffffff' rx='12'/%3E%3Crect x='50' y='130' width='500' height='300' fill='%23ffffff' rx='12'/%3E%3Crect x='80' y='160' width='200' height='100' fill='%2300d4aa' opacity='0.3' rx='8'/%3E%3Crect x='300' y='160' width='200' height='100' fill='%238b5cf6' opacity='0.3' rx='8'/%3E%3Crect x='80' y='280' width='420' height='20' fill='%23e0f2fe' rx='4'/%3E%3Crect x='80' y='320' width='350' height='20' fill='%23e0f2fe' rx='4'/%3E%3Crect x='80' y='360' width='280' height='20' fill='%23e0f2fe' rx='4'/%3E%3C/svg%3E"
+                                alt="DeskTime Dashboard">
+                        </div>
+                        <div class="floating-card card-1">
+                            <div style="font-size:2rem;margin-bottom:0.5rem">⏱️</div>
+                            <div style="font-weight:700;font-size:1.2rem;color:var(--primary)">124.5 hrs</div>
+                            <div style="font-size:0.9rem;color:var(--text-light)">This Week</div>
+                        </div>
+                        <div class="floating-card card-2">
+                            <div style="font-size:2rem;margin-bottom:0.5rem">📈</div>
+                            <div style="font-weight:700;font-size:1.2rem;color:var(--primary)">+23%</div>
+                            <div style="font-size:0.9rem;color:var(--text-light)">Productivity</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="section-padding" id="features" style="background:var(--bg)">
+        <div class="container-custom">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-tag">Smart Capabilities</span>
+                <h2 class="section-title mt-2">Complete Control for Modern Remote Workforces</h2>
+                <p class="section-description mt-3">A unified set of intelligent tools that help organizations monitor performance, streamline workflows, and maintain transparency across remote and hybrid teams.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade">
+                    <div class="feature-icon">⏰</div>
+                    <h3>Automatic Time Tracking</h3>
+                    <p>Capture every billable minute with intelligent time tracking that works in the background without disrupting workflow.</p>
+                </div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade">
+                    <div class="feature-icon">📊</div>
+                    <h3>Productivity Insights</h3>
+                    <p>Get detailed analytics on how time is spent, identify bottlenecks, and optimize team performance with data-driven insights.</p>
+                </div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade">
+                    <div class="feature-icon">📸</div>
+                    <h3>Optional Screenshots</h3>
+                    <p>Build trust and accountability with configurable screenshot monitoring that respects privacy while ensuring productivity.</p>
+                </div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade">
+                    <div class="feature-icon">🔗</div>
+                    <h3>Seamless Integrations</h3>
+                    <p>Connect with 60+ tools including Jira, Asana, Slack, and more to centralize your workflow management.</p>
+                </div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade">
+                    <div class="feature-icon">💰</div>
+                    <h3>Payroll Management</h3>
+                    <p>Automate payroll calculations based on tracked hours, with support for multiple currencies and payment methods.</p>
+                </div></div>
+                <div class="col-lg-4 col-md-6"><div class="feature-card scroll-fade">
+                    <div class="feature-icon">📱</div>
+                    <h3>Cross-Platform Support</h3>
+                    <p>Work seamlessly across Windows, Mac, Linux, iOS, and Android with our native apps and web interface.</p>
+                </div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOLUTIONS -->
+    <section class="section-padding" id="solutions" style="background:linear-gradient(180deg,var(--bg) 0%,var(--bg-light) 100%)">
+        <div class="container-custom">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-tag">Workforce Solutions</span>
+                <h2 class="section-title mt-2">Solutions for Every Team Structure</h2>
+                <p class="section-description mt-3">Whether your team is remote, hybrid, in-office, or a mix of all three, we have the perfect solution tailored to your needs.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6"><div class="solutions-card scroll-fade">
+                    <h3>Remote</h3>
+                    <p>Track and optimize remote team productivity with seamless monitoring tools designed for distributed workforces across time zones.</p>
+                    <a href="./Workforce Type/remote.html" class="card-link">Learn more
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div></div>
+                <div class="col-lg-4 col-md-6"><div class="solutions-card scroll-fade">
+                    <h3>Hybrid</h3>
+                    <p>Unify your hybrid workforce with flexible tools that work seamlessly across office and remote environments with consistent tracking.</p>
+                    <a href="./Workforce Type/hybrid.html" class="card-link">Learn more
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div></div>
+                <div class="col-lg-4 col-md-6"><div class="solutions-card scroll-fade">
+                    <h3>In-Office</h3>
+                    <p>Enhance office productivity with real-time insights and analytics that help teams stay focused, efficient, and accountable.</p>
+                    <a href="./Workforce Type/in-office.html" class="card-link">Learn more
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div></div>
+                <div class="col-lg-4 col-md-6"><div class="solutions-card scroll-fade">
+                    <h3>Enterprise</h3>
+                    <p>Scale your productivity solutions with enterprise-grade features, advanced security, compliance tools, and dedicated support.</p>
+                    <a href="./Workforce Type/enterprise.html" class="card-link">Learn more
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div></div>
+                <div class="col-lg-4 col-md-6"><div class="solutions-card scroll-fade">
+                    <h3>SME &amp; SMB</h3>
+                    <p>Affordable, powerful solutions designed specifically for small and medium-sized businesses to boost team efficiency and growth.</p>
+                    <a href="./Workforce Type/sme-smb.html" class="card-link">Learn more
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                    </a>
+                </div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIALS -->
+    <section class="testimonials-section">
+        <div class="container-custom" style="position:relative;z-index:2">
+            <div class="text-center mb-5 scroll-fade">
+                <span class="section-tag">Testimonials</span>
+                <h2 class="section-title mt-2">Loved by Teams Worldwide</h2>
+                <p class="section-description mt-3">See how DeskTime is transforming workforce management for companies of all sizes.</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6"><div class="testimonial-card scroll-fade">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"DeskTime has completely transformed how we manage our remote team. The insights are invaluable, and our productivity has increased by 35% in just three months."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SJ</div>
+                        <div class="author-info"><h4>Sarah Johnson</h4><p>CEO, TechStart Inc.</p></div>
+                    </div>
+                </div></div>
+                <div class="col-lg-4 col-md-6"><div class="testimonial-card scroll-fade">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"The payroll integration alone has saved us countless hours. DeskTime pays for itself multiple times over. Best investment we've made for our distributed team."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">MR</div>
+                        <div class="author-info"><h4>Michael Rodriguez</h4><p>Operations Director, Global Solutions</p></div>
+                    </div>
+                </div></div>
+                <div class="col-lg-4 col-md-6"><div class="testimonial-card scroll-fade">
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">"We've tried several time tracking tools, but DeskTime is the only one that our entire team actually uses. The interface is intuitive and the features are exactly what we need."</p>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">EP</div>
+                        <div class="author-info"><h4>Emily Patel</h4><p>Project Manager, Creative Agency</p></div>
+                    </div>
+                </div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-section">
+        <div class="container-custom">
+            <div class="cta-content scroll-fade">
+                <h2>Ready to Transform Your Workforce?</h2>
+                <p>Join 500,000+ users in 180+ countries who trust DeskTime to manage their distributed teams.</p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="#trial" class="btn-custom btn-white-custom">Start 14-Day Free Trial</a>
+                    <a href="signup.html"  class="btn-custom btn-outline-white-custom">Schedule a Demo</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container-custom">
+            <div class="row g-5">
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Products</h4>
+                    <ul class="footer-links">
+                        <li><a href="./Products/features.html">Features</a></li>
+                        <li><a href="./Products/Pricingg.html">Pricing</a></li>
+                        <li><a href="#">Integrations</a></li>
+                        <li><a href="#">Get started</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Use Case</h4>
+                    <ul class="footer-links">
+                        <li><a href="./Use Case/product-analytics.html">Productivity Analytics</a></li>
+                        <li><a href="./Use Case/workforce-analytics.html">Workforce Analytics</a></li>
+                        <li><a href="./Use Case/distributed-workforce.html">Distributed Workforce</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Features</h4>
+                    <ul class="footer-links">
+                        <li><a href="#">Benchmarks AI</a></li>
+                        <li><a href="./Features/employee-monitoring.html">Employee Monitoring</a></li>
+                        <li><a href="./Features/time-tracking.html">Time Tracking</a></li>
+                        <li><a href="./Features/payroll.html">Payroll</a></li>
+                        <li><a href="./Features/TimeManagement.html">Time Management</a></li>
+                        <li><a href="./Features/Screen_Monitoring.html">Screen Monitoring</a></li>
+                        <li><a href="./Features/attendance.html">Attendance</a></li>
+                        <li><a href="./Features/Unusual_Activity_Report.html">Unusual Activity Report</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Workforce Type</h4>
+                    <ul class="footer-links">
+                        <li><a href="./Workforce Type/remote.html">Remote</a></li>
+                        <li><a href="./Workforce Type/hybrid.html">Hybrid</a></li>
+                        <li><a href="./Workforce Type/in-office.html">In-Office</a></li>
+                        <li><a href="./Workforce Type/enterprise.html">Enterprise</a></li>
+                        <li><a href="./Workforce Type/sme-smb.html">SME &amp; SMB</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg col-md-6 footer-column">
+                    <h4>Company</h4>
+                    <ul class="footer-links">
+                        <li><a href="./Company/aboutus.html">About us</a></li>
+                        <li><a href="./Company/careers.html">Careers</a></li>
+                        <li><a href="./Company/TermsofService.html">Terms Of Service</a></li>
+                        <li><a href="./Company/privancypolicy.html">Privacy Policy</a></li>
+                    </ul>
+                    <div class="footer-social">
+                        <a href="https://linkedin.com" target="_blank" class="social-icon" aria-label="LinkedIn">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6zM2 9h4v12H2z"/>
+                                <circle cx="4" cy="4" r="2"/>
+                            </svg>
+                        </a>
+                        <a href="https://facebook.com" target="_blank" class="social-icon" aria-label="Facebook">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/>
+                            </svg>
+                        </a>
+                        <a href="https://instagram.com" target="_blank" class="social-icon" aria-label="Instagram">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z" fill="none" stroke="currentColor" stroke-width="2"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" stroke="currentColor" stroke-width="2"/>
+                            </svg>
+                        </a>
+                        <a href="https://twitter.com" target="_blank" class="social-icon" aria-label="Twitter">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23 3a10.9 10.9 0 01-3.14 1.53 4.48 4.48 0 00-7.86 3v1A10.66 10.66 0 013 4s-4 9 5 13a11.64 11.64 0 01-7 2c9 5 20 0 20-11.5a4.5 4.5 0 00-.08-.83A7.72 7.72 0 0023 3z"/>
+                            </svg>
+                        </a>
+                        <a href="https://youtube.com" target="_blank" class="social-icon" aria-label="YouTube">
+                            <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M23 9.7s-.23-1.62-.92-2.33c-.88-.92-1.86-.93-2.31-.98C16.57 6.14 12 6.14 12 6.14s-4.57 0-7.77.25c-.45.05-1.43.06-2.31.98C1.23 8.08 1 9.7 1 9.7S.77 11.55.77 13.4v1.73c0 1.85.23 3.7.23 3.7s.23 1.62.92 2.33c.88.92 2.04.89 2.56.99 1.85.18 7.52.23 7.52.23s4.58-.01 7.77-.26c.45-.05 1.43-.06 2.31-.98.69-.71.92-2.33.92-2.33s.23-1.85.23-3.7v-1.73c0-1.85-.23-3.7-.23-3.7zM9.54 15.57V9.43l6 3.07-6 3.07z"/>
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 DeskTime. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        /* ─────────────────────────────────────────────
+           LOADING SCREEN DISMISS — 2.6s on window load
+        ───────────────────────────────────────────── */
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                document.getElementById('loadingScreen').classList.add('hide');
+            }, 2600);
+        });
+
+        /* ─────────────────────────────────────────────
+           NAVBAR SCROLL SHADOW
+        ───────────────────────────────────────────── */
+        const nav = document.getElementById('mainNav');
+        window.addEventListener('scroll', () => {
+            nav.classList.toggle('scrolled', scrollY > 50);
+        });
+
+        /* ─────────────────────────────────────────────
+           FOOTER ACCORDION — mobile only
+        ───────────────────────────────────────────── */
+        document.querySelectorAll('.footer-column').forEach(col => {
+            col.querySelector('h4')?.addEventListener('click', () => {
+                if (window.innerWidth > 768) return;
+                col.classList.toggle('active');
+            });
+        });
+
+        /* ─────────────────────────────────────────────
+           SCROLL-FADE — IntersectionObserver
+        ───────────────────────────────────────────── */
+        const io = new IntersectionObserver((entries) => {
+            entries.forEach((entry, i) => {
+                if (entry.isIntersecting) {
+                    setTimeout(() => entry.target.classList.add('visible'), i * 90);
+                }
+            });
+        }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.scroll-fade').forEach(el => io.observe(el));
+
+        /* ─────────────────────────────────────────────
+           SMOOTH SCROLL
+        ───────────────────────────────────────────── */
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const t = document.querySelector(a.getAttribute('href'));
+                if (!t) return;
+                e.preventDefault();
+                window.scrollTo({ top: t.offsetTop - 82, behavior: 'smooth' });
+            });
+        });
+    </script>
+
+</body>
+</html>
