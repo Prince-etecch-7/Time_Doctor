@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>DeskTime - Portal Access</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        body { 
+            background: linear-gradient(135deg, #0f111a 0%, #1a1c23 50%, #222631 100%); 
+            min-height: 100vh; display: flex; align-items: center; justify-content: center; 
+            position: relative; overflow: hidden; padding: 20px; font-family: 'Outfit', sans-serif; color: white;
+        }
+        .login-card { 
+            background: rgba(26, 28, 35, 0.95); backdrop-filter: blur(20px); 
+            border-radius: 24px; padding: 3.5rem 3rem; width: 100%; max-width: 450px; 
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5); border: 1px solid rgba(0,212,170,0.2); 
+            position: relative; z-index: 10;
+        }
+        .form-control-custom { 
+            border-radius: 12px; padding: 14px 18px; border: 2px solid #2d303e; 
+            background-color: #161821 !important; color: #ffffff !important; font-weight: 500; transition: 0.3s;
+        }
+        .form-control-custom:focus { 
+            border-color: #00d4aa; box-shadow: 0 0 0 4px rgba(0, 212, 170, 0.15); 
+            outline: none; background-color: #1a1c23 !important; color: #ffffff !important;
+        }
+        .form-control-custom::placeholder { color: #8b949e !important; }
+        .form-control-custom:-webkit-autofill,
+        .form-control-custom:-webkit-autofill:hover, 
+        .form-control-custom:-webkit-autofill:focus {
+            -webkit-box-shadow: 0 0 0 30px #161821 inset !important;
+            -webkit-text-fill-color: white !important;
+            transition: background-color 5000s ease-in-out 0s;
+        }
+        .btn-login { background: #00d4aa; color: #161821; border: none; transition: 0.3s; }
+        .btn-login:hover { background: #00e8ba; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,212,170,0.3); }
+        .signup-link-wrapper { text-align: center; margin-top: 1.5rem; font-size: 0.9rem; }
+        .signup-link-wrapper a { color: #00d4aa; font-weight: 700; text-decoration: none; }
+        
+        /* Light Mode Overrides for Auth */
+        body.light-mode { background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 50%, #fce7f3 100%); color: #1a1c23; }
+        body.light-mode .login-card { background: rgba(255, 255, 255, 0.95); border: 1px solid rgba(0,0,0,0.05); box-shadow: 0 25px 50px rgba(0,0,0,0.05); }
+        body.light-mode .form-control-custom { background-color: #f8fafc !important; color: #1a1c23 !important; border-color: #e2e8f0; }
+        body.light-mode .form-control-custom:-webkit-autofill { -webkit-box-shadow: 0 0 0 30px #f8fafc inset !important; -webkit-text-fill-color: #1a1c23 !important; }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <div class="text-center mb-5">
+            <h1 class="fw-bold mb-1" style="font-family: 'Playfair Display', serif; font-size: 2.5rem; color: #00d4aa;">DeskTime</h1>
+            <p class="text-muted small text-uppercase letter-spacing-1">Secure Workspace Access</p>
+        </div>
+
+        {% if error %}
+            <div class="alert alert-danger rounded-3 bg-danger bg-opacity-10 text-danger fw-bold small text-center mb-4 border-0">
+                <i class="bi bi-shield-exclamation me-2"></i> {{ error }}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            <div class="mb-4 position-relative">
+                <label class="form-label fw-bold small opacity-75">Workspace ID / Username</label>
+                <input type="text" name="username" class="form-control form-control-custom" placeholder="e.g. admin_01" required autocomplete="off">
+            </div>
+            
+            <div class="mb-4 position-relative">
+                <label class="form-label fw-bold small opacity-75">Secure Password</label>
+                <input type="password" name="password" class="form-control form-control-custom" placeholder="••••••••" required autocomplete="new-password">
+            </div>
+            
+            <button type="submit" class="btn btn-login w-100 py-3 rounded-pill fw-bold mt-2" style="font-size: 1.1rem;">
+                Secure Login <i class="bi bi-arrow-right-circle-fill ms-2 fs-5"></i>
+            </button>
+        </form>
+
+        <div class="signup-link-wrapper">
+            <span class="opacity-75">New to the team?</span> <a href="/signup">Request Access</a>
+        </div>
+
+        <div class="text-center mt-4 pt-3 border-top border-secondary border-opacity-25">
+            <p class="small opacity-50 mb-0"><i class="bi bi-shield-check text-success me-1"></i> End-to-End Encrypted Session</p>
+        </div>
+    </div>
+
+    <script>
+        fetch('/api/get_config').then(r => r.json()).then(data => {
+            localStorage.setItem('desktime_theme', data.theme);
+            if(data.theme === 'light') { document.body.classList.add('light-mode'); } 
+            else { document.body.classList.remove('light-mode'); }
+        });
+    </script>
+</body>
+</html>
